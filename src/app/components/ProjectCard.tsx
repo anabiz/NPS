@@ -1,6 +1,7 @@
 import { Project } from '../data/mockData';
 import { formatCurrency, formatNumber, getStatusBgColor, getStatusLabel, getStatusTextColor } from '../utils/helpers';
 import { Calendar, DollarSign, MapPin, TrendingUp, Users, Camera, Play } from 'lucide-react';
+import { ShareButton } from './ShareButton';
 
 interface ProjectCardProps {
   project: Project;
@@ -81,15 +82,23 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 pt-4 border-t text-xs text-gray-500">
-          <div className="flex items-center gap-1">
-            <Calendar className="w-3 h-3" />
-            <span>{new Date(project.startDate).toLocaleDateString()}</span>
+        <div className="flex items-center justify-between pt-4 border-t text-xs text-gray-500">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              <span>{new Date(project.startDate).toLocaleDateString()}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" />
+              <span>{project.sector}</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" />
-            <span>{project.sector}</span>
-          </div>
+          <ShareButton
+            title={project.name}
+            text={`${project.name} — ${project.progress}% complete. Track Nigeria's development.`}
+            url={typeof window !== 'undefined' ? `${window.location.origin}/projects/${project.id}` : ''}
+            variant="icon"
+          />
         </div>
       </div>
     </div>

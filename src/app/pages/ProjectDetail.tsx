@@ -3,6 +3,7 @@ import { projects } from '../data/mockData';
 import { EvidenceGallery } from '../components/EvidenceGallery';
 import { formatCurrency, formatNumber, getStatusLabel, getStatusBgColor, getStatusTextColor } from '../utils/helpers';
 import { ArrowLeft, MapPin, Calendar, Users, DollarSign, TrendingUp } from 'lucide-react';
+import { ShareButton } from '../components/ShareButton';
 
 export function ProjectDetail() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -31,11 +32,21 @@ export function ProjectDetail() {
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
           <div className="flex flex-col gap-3">
-            <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{project.name}</h1>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-green-100 text-xs sm:text-sm">
-                <span className="flex items-center gap-1"><MapPin className="w-4 h-4" />{project.location}</span>
-                <span className="flex items-center gap-1"><TrendingUp className="w-4 h-4" />{project.sector}</span>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{project.name}</h1>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-green-100 text-xs sm:text-sm">
+                  <span className="flex items-center gap-1"><MapPin className="w-4 h-4" />{project.location}</span>
+                  <span className="flex items-center gap-1"><TrendingUp className="w-4 h-4" />{project.sector}</span>
+                </div>
+              </div>
+              <div className="shrink-0">
+                <ShareButton
+                  title={project.name}
+                  text={`${project.name} — ${project.progress}% complete. ${formatNumber(project.jobsCreated)} jobs created. Track Nigeria's development progress.`}
+                  url={typeof window !== 'undefined' ? window.location.href : ''}
+                  variant="button"
+                />
               </div>
             </div>
             <span className={`self-start px-4 py-1.5 rounded-full text-sm font-medium border ${getStatusBgColor(project.status)} ${getStatusTextColor(project.status)}`}>
