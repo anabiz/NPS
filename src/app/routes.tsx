@@ -1,19 +1,20 @@
 import { createBrowserRouter } from 'react-router';
+import { Landing } from './pages/Landing';
 import { Home } from './pages/Home';
 import { StateDetail } from './pages/StateDetail';
 import { LGADetail } from './pages/LGADetail';
 import { Projects } from './pages/Projects';
 import { Analytics } from './pages/Analytics';
 import { Layout } from './components/Layout';
-
 import { ProjectDetail } from './pages/ProjectDetail';
 
 export const router = createBrowserRouter([
+  { path: '/', Component: Landing },
   {
     path: '/',
     Component: Layout,
     children: [
-      { index: true, Component: Home },
+      { path: 'dashboard', Component: Home },
       { path: 'projects', Component: Projects },
       { path: 'projects/:projectId', Component: ProjectDetail },
       { path: 'analytics', Component: Analytics },

@@ -34,7 +34,7 @@ export function Analytics() {
       <div className="bg-gradient-to-r from-green-600 to-green-700 text-white">
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/dashboard')}
             className="flex items-center gap-2 text-white hover:text-green-100 mb-6 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />

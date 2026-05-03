@@ -1,19 +1,20 @@
 import { Outlet, Link, useLocation } from 'react-router';
 import { Building, BarChart3, FolderOpen, Menu, X, Phone, Mail, MapPin, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
+import { CoatOfArms } from './CoatOfArms';
 
 export function Layout() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => {
-    if (path === '/' && location.pathname === '/') return true;
-    if (path !== '/' && location.pathname.startsWith(path)) return true;
+    if (path === '/dashboard' && location.pathname === '/dashboard') return true;
+    if (path !== '/dashboard' && location.pathname.startsWith(path)) return true;
     return false;
   };
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: Building },
+    { path: '/dashboard', label: 'Dashboard', icon: Building },
     { path: '/projects', label: 'Projects', icon: FolderOpen },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
   ];
@@ -114,11 +115,7 @@ export function Layout() {
               </p>
               {/* Coat of arms placeholder */}
               <div className="flex items-center gap-3">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Coat_of_arms_of_Nigeria.svg/120px-Coat_of_arms_of_Nigeria.svg.png"
-                  alt="Coat of Arms of Nigeria"
-                  className="w-12 h-12 object-contain"
-                />
+                <CoatOfArms className="w-12 h-12" />
                 <div className="text-xs text-gray-500 leading-snug">
                   Federal Republic<br />of Nigeria
                 </div>
@@ -130,7 +127,7 @@ export function Layout() {
               <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">Quick Links</h3>
               <ul className="space-y-2.5">
                 {[
-                  { to: '/', label: 'National Dashboard' },
+                  { to: '/dashboard', label: 'National Dashboard' },
                   { to: '/projects', label: 'All Projects' },
                   { to: '/analytics', label: 'Performance Analytics' },
                 ].map(link => (
