@@ -41,13 +41,13 @@ export function Projects() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg border p-6 mb-8">
+        <div className="bg-white rounded-lg border p-4 sm:p-6 mb-8">
           <div className="flex items-center gap-2 mb-4">
             <Filter className="w-5 h-5 text-gray-600" />
             <h2 className="font-semibold">Filter Projects</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
               <div className="relative">

@@ -85,13 +85,13 @@ export function Analytics() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white rounded-lg border p-6">
-            <h2 className="text-xl font-bold mb-6">Jobs Created Over Time</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={metrics}>
+          <div className="bg-white rounded-lg border p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Jobs Created Over Time</h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={metrics} margin={{ left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
+                <XAxis dataKey="date" fontSize={11} />
+                <YAxis fontSize={11} />
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="jobsCreated" stroke="#16a34a" strokeWidth={2} name="Jobs Created" />
@@ -99,13 +99,13 @@ export function Analytics() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-lg border p-6">
-            <h2 className="text-xl font-bold mb-6">Food Price Index Trend</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={metrics}>
+          <div className="bg-white rounded-lg border p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Food Price Index Trend</h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={metrics} margin={{ left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
+                <XAxis dataKey="date" fontSize={11} />
+                <YAxis fontSize={11} />
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="foodPriceIndex" stroke="#f59e0b" strokeWidth={2} name="Food Price Index" />
@@ -113,13 +113,13 @@ export function Analytics() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-lg border p-6">
-            <h2 className="text-xl font-bold mb-6">Power Supply Trend (MW)</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={metrics}>
+          <div className="bg-white rounded-lg border p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Power Supply Trend (MW)</h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={metrics} margin={{ left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
+                <XAxis dataKey="date" fontSize={11} />
+                <YAxis fontSize={11} />
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="powerSupply" stroke="#3b82f6" strokeWidth={2} name="Power Supply (MW)" />
@@ -127,13 +127,13 @@ export function Analytics() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-lg border p-6">
-            <h2 className="text-xl font-bold mb-6">Monthly Project Completions</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={metrics}>
+          <div className="bg-white rounded-lg border p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Monthly Project Completions</h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={metrics} margin={{ left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
+                <XAxis dataKey="date" fontSize={11} />
+                <YAxis fontSize={11} />
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="projectsCompleted" fill="#16a34a" name="Projects Completed" />
@@ -143,13 +143,13 @@ export function Analytics() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg border p-6">
-            <h2 className="text-xl font-bold mb-6">Projects by Sector</h2>
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={sectorData} layout="horizontal">
+          <div className="bg-white rounded-lg border p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Projects by Sector</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={sectorData} layout="horizontal" margin={{ left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis dataKey="sector" type="category" width={100} />
+                <XAxis type="number" fontSize={11} />
+                <YAxis dataKey="sector" type="category" width={80} fontSize={10} />
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="projects" fill="#3b82f6" name="Total Projects" />
@@ -158,13 +158,13 @@ export function Analytics() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-lg border p-6">
-            <h2 className="text-xl font-bold mb-6">Projects by Geopolitical Zone</h2>
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={zoneData}>
+          <div className="bg-white rounded-lg border p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Projects by Geopolitical Zone</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={zoneData} margin={{ left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="zone" />
-                <YAxis />
+                <XAxis dataKey="zone" fontSize={10} angle={-20} textAnchor="end" height={50} />
+                <YAxis fontSize={11} />
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="projects" fill="#8b5cf6" name="Total Projects" />

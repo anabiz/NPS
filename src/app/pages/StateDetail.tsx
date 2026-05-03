@@ -116,19 +116,19 @@ export function StateDetail() {
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center min-w-[100px]">
-                <div className="text-2xl font-bold">{completionRate}%</div>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 text-center">
+                <div className="text-xl sm:text-2xl font-bold">{completionRate}%</div>
                 <div className="text-green-100 text-xs mt-0.5">Completion</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center min-w-[100px]">
-                <div className="text-2xl font-bold flex items-center justify-center gap-1">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 text-center">
+                <div className="text-xl sm:text-2xl font-bold flex items-center justify-center gap-1">
                   <Award className="w-4 h-4" />#{stateRank}
                 </div>
                 <div className="text-green-100 text-xs mt-0.5">National Rank</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center min-w-[100px]">
-                <div className="text-2xl font-bold">{state.lgas.length}</div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 text-center">
+                <div className="text-xl sm:text-2xl font-bold">{state.lgas.length}</div>
                 <div className="text-green-100 text-xs mt-0.5">LGAs</div>
               </div>
             </div>
@@ -164,19 +164,19 @@ export function StateDetail() {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-bold text-gray-900">{formatCurrency(state.budget)}</div>
+                  <div className="text-sm sm:text-lg font-bold text-gray-900">{formatCurrency(state.budget)}</div>
                   <div className="text-xs text-gray-500">Total Budget</div>
                 </div>
                 <div className="text-center p-3 bg-green-50 rounded-lg">
-                  <div className="text-lg font-bold text-green-700">{formatCurrency(state.spent)}</div>
+                  <div className="text-sm sm:text-lg font-bold text-green-700">{formatCurrency(state.spent)}</div>
                   <div className="text-xs text-gray-500">Amount Spent</div>
                 </div>
                 <div className="text-center p-3 bg-blue-50 rounded-lg">
-                  <div className="text-lg font-bold text-blue-700">{formatCurrency(state.budget - state.spent)}</div>
+                  <div className="text-sm sm:text-lg font-bold text-blue-700">{formatCurrency(state.budget - state.spent)}</div>
                   <div className="text-xs text-gray-500">Remaining</div>
                 </div>
                 <div className="text-center p-3 bg-amber-50 rounded-lg">
-                  <div className="text-lg font-bold text-amber-700">{budgetUtilization}%</div>
+                  <div className="text-sm sm:text-lg font-bold text-amber-700">{budgetUtilization}%</div>
                   <div className="text-xs text-gray-500">Utilization</div>
                 </div>
               </div>
@@ -427,10 +427,10 @@ export function StateDetail() {
               <BarChart3 className="w-5 h-5 text-blue-600" />
               <h2 className="text-lg font-bold">Top LGAs by Project Count</h2>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={lgaChartData}>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={lgaChartData} margin={{ left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" fontSize={11} />
+                <XAxis dataKey="name" fontSize={10} angle={-30} textAnchor="end" height={50} />
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="projects" fill="#3b82f6" name="Total Projects" radius={[4, 4, 0, 0]} />
@@ -453,7 +453,7 @@ export function StateDetail() {
                     placeholder="Search LGA..."
                     value={lgaSearch}
                     onChange={e => setLgaSearch(e.target.value)}
-                    className="pl-9 pr-3 py-2 border rounded-lg text-sm w-48 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="pl-9 pr-3 py-2 border rounded-lg text-sm w-full sm:w-48 focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
                 {(['all', 'completed', 'in-progress', 'delayed'] as const).map(status => (

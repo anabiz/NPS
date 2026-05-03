@@ -30,15 +30,15 @@ export function ProjectDetail() {
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/80 hover:text-white mb-6 text-sm">
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div className="flex flex-col gap-3">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold">{project.name}</h1>
-              <div className="flex items-center gap-3 mt-2 text-green-100 text-sm">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{project.name}</h1>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-green-100 text-xs sm:text-sm">
                 <span className="flex items-center gap-1"><MapPin className="w-4 h-4" />{project.location}</span>
                 <span className="flex items-center gap-1"><TrendingUp className="w-4 h-4" />{project.sector}</span>
               </div>
             </div>
-            <span className={`px-4 py-1.5 rounded-full text-sm font-medium border ${getStatusBgColor(project.status)} ${getStatusTextColor(project.status)}`}>
+            <span className={`self-start px-4 py-1.5 rounded-full text-sm font-medium border ${getStatusBgColor(project.status)} ${getStatusTextColor(project.status)}`}>
               {getStatusLabel(project.status)}
             </span>
           </div>
@@ -47,25 +47,25 @@ export function ProjectDetail() {
 
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Key metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-lg border p-5 text-center">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8">
+          <div className="bg-white rounded-lg border p-3 sm:p-5 text-center">
             <DollarSign className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-            <div className="text-xl font-bold">{formatCurrency(project.budget)}</div>
+            <div className="text-base sm:text-xl font-bold">{formatCurrency(project.budget)}</div>
             <div className="text-xs text-gray-500">Budget</div>
           </div>
-          <div className="bg-white rounded-lg border p-5 text-center">
+          <div className="bg-white rounded-lg border p-3 sm:p-5 text-center">
             <DollarSign className="w-5 h-5 text-green-600 mx-auto mb-1" />
-            <div className="text-xl font-bold">{formatCurrency(project.spent)}</div>
+            <div className="text-base sm:text-xl font-bold">{formatCurrency(project.spent)}</div>
             <div className="text-xs text-gray-500">Spent</div>
           </div>
-          <div className="bg-white rounded-lg border p-5 text-center">
+          <div className="bg-white rounded-lg border p-3 sm:p-5 text-center">
             <Users className="w-5 h-5 text-purple-600 mx-auto mb-1" />
-            <div className="text-xl font-bold">{formatNumber(project.jobsCreated)}</div>
+            <div className="text-base sm:text-xl font-bold">{formatNumber(project.jobsCreated)}</div>
             <div className="text-xs text-gray-500">Jobs Created</div>
           </div>
-          <div className="bg-white rounded-lg border p-5 text-center">
+          <div className="bg-white rounded-lg border p-3 sm:p-5 text-center">
             <Calendar className="w-5 h-5 text-amber-600 mx-auto mb-1" />
-            <div className="text-xl font-bold">{project.progress}%</div>
+            <div className="text-base sm:text-xl font-bold">{project.progress}%</div>
             <div className="text-xs text-gray-500">Progress</div>
           </div>
         </div>

@@ -46,9 +46,9 @@ export function EvidenceGallery({ media, projectName }: EvidenceGalleryProps) {
       {hasBeforeAfter && beforeImg && afterImg && (
         <div className="mb-6">
           <h3 className="text-sm font-semibold text-gray-700 mb-3">Before & After Comparison</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-4">
             <div className="relative group cursor-pointer" onClick={() => setLightboxIndex(media.indexOf(beforeImg))}>
-              <img src={beforeImg.url} alt={beforeImg.caption} className="w-full h-48 object-cover rounded-lg" />
+              <img src={beforeImg.url} alt={beforeImg.caption} className="w-full h-32 sm:h-48 object-cover rounded-lg" />
               <div className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700">Before</div>
               <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent rounded-b-lg p-2">
                 <p className="text-white text-xs">{beforeImg.caption}</p>
@@ -56,7 +56,7 @@ export function EvidenceGallery({ media, projectName }: EvidenceGalleryProps) {
               </div>
             </div>
             <div className="relative group cursor-pointer" onClick={() => setLightboxIndex(media.indexOf(afterImg))}>
-              <img src={afterImg.url} alt={afterImg.caption} className="w-full h-48 object-cover rounded-lg" />
+              <img src={afterImg.url} alt={afterImg.caption} className="w-full h-32 sm:h-48 object-cover rounded-lg" />
               <div className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700">After</div>
               <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent rounded-b-lg p-2">
                 <p className="text-white text-xs">{afterImg.caption}</p>
@@ -126,29 +126,29 @@ export function EvidenceGallery({ media, projectName }: EvidenceGalleryProps) {
       {/* Lightbox */}
       {lightboxItem && lightboxIndex !== null && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightboxIndex(null)}>
-          <button className="absolute top-4 right-4 text-white/80 hover:text-white z-10" onClick={() => setLightboxIndex(null)}>
-            <X className="w-8 h-8" />
+          <button className="absolute top-3 right-3 text-white/80 hover:text-white z-10" onClick={() => setLightboxIndex(null)}>
+            <X className="w-6 h-6 sm:w-8 sm:h-8" />
           </button>
 
           {lightboxIndex > 0 && (
             <button
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 rounded-full p-2"
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 rounded-full p-1.5 sm:p-2"
               onClick={e => { e.stopPropagation(); navigate(-1); }}
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           )}
 
           {lightboxIndex < filtered.length - 1 && (
             <button
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 rounded-full p-2"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white bg-white/10 rounded-full p-1.5 sm:p-2"
               onClick={e => { e.stopPropagation(); navigate(1); }}
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           )}
 
-          <div className="max-w-4xl max-h-[85vh] w-full mx-4" onClick={e => e.stopPropagation()}>
+          <div className="max-w-4xl max-h-[85vh] w-full mx-2 sm:mx-4" onClick={e => e.stopPropagation()}>
             {lightboxItem.type === 'video' ? (
               <video
                 src={lightboxItem.url}

@@ -95,8 +95,8 @@ export function NigeriaMap() {
   const hoveredData = hoveredState ? getStateData(hoveredState) : null;
 
   return (
-    <div className="bg-white rounded-lg border p-6">
-      <h2 className="text-xl font-bold mb-6">Interactive Nigeria Map</h2>
+    <div className="bg-white rounded-lg border p-3 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Interactive Nigeria Map</h2>
 
       <div className="relative">
         <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full h-auto" style={{ maxHeight: '600px' }}>
@@ -155,22 +155,22 @@ export function NigeriaMap() {
         )}
       </div>
 
-      <div className="flex flex-wrap gap-4 pt-4 border-t mt-6">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-green-500" />
-          <span className="text-sm text-gray-600">Completed / On Track</span>
+      <div className="flex flex-wrap gap-2 sm:gap-4 pt-3 sm:pt-4 border-t mt-4 sm:mt-6">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500" />
+          <span className="text-xs sm:text-sm text-gray-600">Completed</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-amber-500" />
-          <span className="text-sm text-gray-600">In Progress</span>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-500" />
+          <span className="text-xs sm:text-sm text-gray-600">In Progress</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-500" />
-          <span className="text-sm text-gray-600">Delayed</span>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500" />
+          <span className="text-xs sm:text-sm text-gray-600">Delayed</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-gray-400" />
-          <span className="text-sm text-gray-600">Not Started</span>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-gray-400" />
+          <span className="text-xs sm:text-sm text-gray-600">Not Started</span>
         </div>
       </div>
     </div>

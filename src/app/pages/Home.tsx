@@ -78,8 +78,8 @@ export function Home() {
                   <Building className="w-8 h-8" />
                 </div>
                 <div>
-                  <h1 className="text-3xl md:text-4xl font-bold">Nigeria National Performance Scorecard</h1>
-                  <p className="text-green-100 mt-1">Real-time transparency into government performance across all 36 states + FCT</p>
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">Nigeria National Performance Scorecard</h1>
+                  <p className="text-green-100 mt-1 text-sm sm:text-base">Real-time transparency into government performance across all 36 states + FCT</p>
                 </div>
               </div>
               <p className="text-green-50 text-sm max-w-2xl mt-4">
@@ -88,20 +88,20 @@ export function Home() {
             </div>
 
             {/* Hero quick stats */}
-            <div className="grid grid-cols-2 gap-3 lg:w-auto">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 min-w-[140px]">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:w-auto">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
                 <div className="text-2xl font-bold">{stats.completionRate}%</div>
                 <div className="text-green-100 text-xs mt-1">Completion Rate</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 min-w-[140px]">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
                 <div className="text-2xl font-bold">{formatNumber(stats.totalJobs)}</div>
                 <div className="text-green-100 text-xs mt-1">Jobs Created</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 min-w-[140px]">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
                 <div className="text-2xl font-bold">{formatNumber(stats.totalRoads)}</div>
                 <div className="text-green-100 text-xs mt-1">Roads Completed</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 min-w-[140px]">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
                 <div className="text-2xl font-bold">{states.length}</div>
                 <div className="text-green-100 text-xs mt-1">States Covered</div>
               </div>
@@ -224,19 +224,19 @@ export function Home() {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-bold text-gray-900">{formatCurrency(stats.totalBudget)}</div>
+                  <div className="text-sm sm:text-lg font-bold text-gray-900">{formatCurrency(stats.totalBudget)}</div>
                   <div className="text-xs text-gray-500">Total Budget</div>
                 </div>
                 <div className="text-center p-3 bg-green-50 rounded-lg">
-                  <div className="text-lg font-bold text-green-700">{formatCurrency(stats.totalSpent)}</div>
+                  <div className="text-sm sm:text-lg font-bold text-green-700">{formatCurrency(stats.totalSpent)}</div>
                   <div className="text-xs text-gray-500">Amount Spent</div>
                 </div>
                 <div className="text-center p-3 bg-blue-50 rounded-lg">
-                  <div className="text-lg font-bold text-blue-700">{formatCurrency(stats.totalBudget - stats.totalSpent)}</div>
+                  <div className="text-sm sm:text-lg font-bold text-blue-700">{formatCurrency(stats.totalBudget - stats.totalSpent)}</div>
                   <div className="text-xs text-gray-500">Remaining</div>
                 </div>
                 <div className="text-center p-3 bg-amber-50 rounded-lg">
-                  <div className="text-lg font-bold text-amber-700">{budgetUtilization}%</div>
+                  <div className="text-sm sm:text-lg font-bold text-amber-700">{budgetUtilization}%</div>
                   <div className="text-xs text-gray-500">Utilization</div>
                 </div>
               </div>
@@ -387,7 +387,7 @@ export function Home() {
                 const maxCount = Math.max(...sectorData.map(d => d.count));
                 return (
                   <div key={s.name} className="flex items-center gap-3">
-                    <span className="text-sm text-gray-600 w-28 shrink-0">{s.name}</span>
+                    <span className="text-xs sm:text-sm text-gray-600 w-20 sm:w-28 shrink-0 truncate">{s.name}</span>
                     <div className="flex-1 bg-gray-100 rounded-full h-3 relative overflow-hidden">
                       <div
                         className="absolute inset-y-0 left-0 bg-blue-500 rounded-full"
