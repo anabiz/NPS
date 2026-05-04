@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router';
-import { Building, BarChart3, FolderOpen, Menu, X, Phone, Mail, MapPin, ExternalLink } from 'lucide-react';
+import { BarChart3, FolderOpen, Menu, X, Phone, Mail, MapPin, ExternalLink, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
 import { CoatOfArms } from './CoatOfArms';
 
@@ -14,7 +14,7 @@ export function Layout() {
   };
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: Building },
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/projects', label: 'Projects', icon: FolderOpen },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
   ];
@@ -25,11 +25,12 @@ export function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link to="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
-                  <Building className="w-5 h-5 text-white" />
+              <Link to="/" className="flex items-center gap-2.5">
+                <CoatOfArms className="w-9 h-9" />
+                <div className="hidden sm:block leading-tight">
+                  <div className="text-sm font-bold text-gray-900">Nigeria NPS</div>
+                  <div className="text-[10px] text-gray-500">National Performance Scorecard</div>
                 </div>
-                <span className="font-bold text-lg hidden sm:inline">Nigeria NPS</span>
               </Link>
             </div>
 
@@ -102,9 +103,7 @@ export function Layout() {
             {/* Column 1 — Branding */}
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-                  <Building className="w-6 h-6 text-white" />
-                </div>
+                <CoatOfArms className="w-10 h-10" />
                 <div>
                   <div className="text-white font-bold text-lg leading-tight">Nigeria NPS</div>
                   <div className="text-xs text-gray-400">National Performance Scorecard</div>

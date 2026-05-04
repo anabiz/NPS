@@ -1,382 +1,433 @@
 import { useNavigate } from 'react-router';
 import { getNationalStats, projects, states } from '../data/mockData';
 import { formatCurrency, formatNumber } from '../utils/helpers';
-import { motion, useInView } from 'motion/react';
+import { motion, useInView, useScroll, useTransform } from 'motion/react';
 import { useRef, useState, useEffect } from 'react';
 import {
   ArrowRight, BarChart3, Eye, Shield, MapPin, Users, Briefcase,
   CheckCircle, Building2, Heart, GraduationCap, Droplets, Zap,
-  ChevronRight, Play,
+  Play, Menu, X,
 } from 'lucide-react';
 import { CoatOfArms } from '../components/CoatOfArms';
 
-function AnimatedCounter({ target, suffix = '', prefix = '' }: { target: number; suffix?: string; prefix?: string }) {
+function Counter({ target, suffix = '' }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-50px' });
-
+  const inView = useInView(ref, { once: true, margin: '-40px' });
   useEffect(() => {
     if (!inView) return;
-    const duration = 2000;
-    const steps = 60;
-    const increment = target / steps;
-    let current = 0;
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(current));
-      }
-    }, duration / steps);
-    return () => clearInterval(timer);
+    let cur = 0;
+    const inc = target / 50;
+    const t = setInterval(() => {
+      cur += inc;
+      if (cur >= target) { setCount(target); clearInterval(t); } else setCount(Math.floor(cur));
+    }, 30);
+    return () => clearInterval(t);
   }, [inView, target]);
-
-  return <span ref={ref}>{prefix}{count.toLocaleString()}{suffix}</span>;
+  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
 }
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i: number = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.15, duration: 0.6, ease: 'easeOut' } }),
-};
-
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.85 },
-  visible: (i: number = 0) => ({ opacity: 1, scale: 1, transition: { delay: i * 0.12, duration: 0.5, ease: 'easeOut' } }),
+const fade = {
+  hidden: { opacity: 0, y: 30 },
+  show: (i: number = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.6 } }),
 };
 
 export function Landing() {
-  const navigate = useNavigate();
+  const nav = useNavigate();
   const stats = getNationalStats();
   const featured = projects.slice(0, 3);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  const zones = ['North West', 'North East', 'North Central', 'South West', 'South South', 'South East'];
-  const zoneData = zones.map(zone => {
+  const zones = ['North West', 'North East', 'North Central', 'South West', 'South South', 'South East'].map(zone => {
     const zs = states.filter(s => s.zone === zone);
-    return { zone, states: zs.length, projects: zs.reduce((a, s) => a + s.projects, 0), jobs: zs.reduce((a, s) => a + s.jobsCreated, 0) };
+    return { zone, count: zs.length, projects: zs.reduce((a, s) => a + s.projects, 0), jobs: zs.reduce((a, s) => a + s.jobsCreated, 0) };
   });
 
+  // Before/after project
+  const baProject = projects.find(p => p.media.some(m => m.tag === 'before') && p.media.some(m => m.tag === 'after'));
+  const beforeImg = baProject?.media.find(m => m.tag === 'before');
+  const afterImg = baProject?.media.find(m => m.tag === 'after');
+
   return (
-    <div className="min-h-screen bg-white overflow-hidden">
-      {/* ─── HERO ─── */}
-      <section className="relative bg-gradient-to-br from-green-800 via-green-700 to-emerald-700 text-white overflow-hidden">
-        {/* Decorative circles */}
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-white/5 rounded-full" />
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-white/5 rounded-full" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/[0.02] rounded-full" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-            {/* Left */}
-            <div className="flex-1 text-center lg:text-left">
-              <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-                <CoatOfArms className="w-20 h-20 sm:w-24 sm:h-24 mx-auto lg:mx-0 mb-6" />
-              </motion.div>
-
-              <motion.p initial="hidden" animate="visible" variants={fadeUp} custom={1}
-                className="text-green-200 text-sm sm:text-base font-medium tracking-widest uppercase mb-3"
-              >
-                Federal Republic of Nigeria
-              </motion.p>
-
-              <motion.h1 initial="hidden" animate="visible" variants={fadeUp} custom={2}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
-              >
-                National Performance{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-200 to-emerald-300">
-                  Scorecard
-                </span>
-              </motion.h1>
-
-              <motion.p initial="hidden" animate="visible" variants={fadeUp} custom={3}
-                className="text-green-100 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed"
-              >
-                Empowering every Nigerian with real-time, transparent access to government performance data across all 36 states and the FCT. Track projects, verify evidence, and hold your government accountable.
-              </motion.p>
-
-              <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={4}
-                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-              >
-                <button
-                  onClick={() => navigate('/dashboard')}
-                  className="px-8 py-4 bg-white text-green-800 rounded-xl font-bold text-lg hover:bg-green-50 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                >
-                  Explore Dashboard
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => navigate('/projects')}
-                  className="px-8 py-4 border-2 border-white/30 text-white rounded-xl font-semibold text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-2"
-                >
-                  View Projects
-                </button>
-              </motion.div>
+    <div className="min-h-screen bg-white">
+      {/* ── NAV ── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14 sm:h-16">
+          <div className="flex items-center gap-2.5">
+            <CoatOfArms className="w-8 h-8" />
+            <div className="hidden sm:block leading-tight">
+              <div className="text-sm font-bold text-gray-900">Nigeria NPS</div>
+              <div className="text-[10px] text-gray-500">National Performance Scorecard</div>
             </div>
+          </div>
+          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+            <button onClick={() => nav('/dashboard')} className="hover:text-green-700 transition-colors">Dashboard</button>
+            <button onClick={() => nav('/projects')} className="hover:text-green-700 transition-colors">Projects</button>
+            <button onClick={() => nav('/analytics')} className="hover:text-green-700 transition-colors">Analytics</button>
+            <button onClick={() => nav('/dashboard')} className="px-5 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors text-sm font-semibold">
+              Get Started
+            </button>
+          </div>
+          <button className="md:hidden p-2" onClick={() => setMenuOpen(!menuOpen)}>
+            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+        {menuOpen && (
+          <div className="md:hidden bg-white border-t px-4 py-3 space-y-2">
+            <button onClick={() => { nav('/dashboard'); setMenuOpen(false); }} className="block w-full text-left py-2 text-sm font-medium text-gray-700">Dashboard</button>
+            <button onClick={() => { nav('/projects'); setMenuOpen(false); }} className="block w-full text-left py-2 text-sm font-medium text-gray-700">Projects</button>
+            <button onClick={() => { nav('/analytics'); setMenuOpen(false); }} className="block w-full text-left py-2 text-sm font-medium text-gray-700">Analytics</button>
+          </div>
+        )}
+      </nav>
 
-            {/* Right — animated stat cards */}
-            <motion.div
-              initial="hidden" animate="visible"
-              className="grid grid-cols-2 gap-3 sm:gap-4 w-full max-w-sm lg:max-w-md"
+      {/* ── FLAG STRIPE ── */}
+      <div className="fixed top-14 sm:top-16 left-0 right-0 z-40 h-1 flex">
+        <div className="flex-1 bg-green-700" /><div className="flex-1 bg-white" /><div className="flex-1 bg-green-700" />
+      </div>
+
+      {/* ── HERO ── */}
+      <section ref={heroRef} className="relative min-h-[100vh] flex flex-col overflow-hidden pt-16">
+        {/* Background image with parallax */}
+        <motion.div style={{ y: heroY }} className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1618828665011-0abd973f7bb8?w=1920&q=80&fit=crop"
+            alt=""
+            className="w-full h-[120%] object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
+        </motion.div>
+
+        <motion.div style={{ opacity: heroOpacity }} className="relative flex-1 flex items-center justify-center">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center text-white py-10">
+            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}>
+              <CoatOfArms className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-6 drop-shadow-xl" />
+            </motion.div>
+
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
+              className="text-white/70 text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase mb-3"
             >
-              {[
-                { label: 'Total Projects', value: stats.totalProjects, icon: Briefcase, color: 'from-blue-500/20 to-blue-600/20' },
-                { label: 'Jobs Created', value: stats.totalJobs, icon: Users, color: 'from-purple-500/20 to-purple-600/20' },
-                { label: 'States Covered', value: 37, icon: MapPin, color: 'from-amber-500/20 to-amber-600/20' },
-                { label: 'Completion Rate', value: stats.completionRate, icon: CheckCircle, color: 'from-emerald-500/20 to-emerald-600/20', suffix: '%' },
-              ].map((item, i) => (
-                <motion.div
-                  key={item.label}
-                  variants={scaleIn}
-                  custom={i + 2}
-                  className={`bg-gradient-to-br ${item.color} backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-5`}
-                >
-                  <item.icon className="w-6 h-6 text-white/70 mb-2" />
-                  <div className="text-2xl sm:text-3xl font-bold">
-                    <AnimatedCounter target={item.value} suffix={item.suffix} />
-                  </div>
-                  <div className="text-green-200 text-xs sm:text-sm mt-1">{item.label}</div>
-                </motion.div>
-              ))}
+              Federal Republic of Nigeria
+            </motion.p>
+
+            <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.6, duration: 0.6 }}
+              className="w-20 h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent mx-auto mb-6"
+            />
+
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.7 }}
+              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] mb-5 tracking-tight"
+            >
+              National Performance
+              <br />Scorecard
+            </motion.h1>
+
+            <motion.p initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1, duration: 0.6 }}
+              className="text-white/70 text-sm sm:text-lg max-w-2xl mx-auto mb-8 leading-relaxed"
+            >
+              Real-time transparency into government performance. Track {formatNumber(stats.totalProjects)} projects, {formatNumber(stats.totalJobs)} jobs created, across all 36 states and the FCT.
+            </motion.p>
+
+            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: 0.5 }}
+              className="flex flex-col sm:flex-row gap-3 justify-center"
+            >
+              <button onClick={() => nav('/dashboard')}
+                className="px-8 py-3.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-base shadow-lg shadow-green-900/30 transition-colors flex items-center justify-center gap-2"
+              >
+                Explore Dashboard <ArrowRight className="w-4 h-4" />
+              </button>
+              <button onClick={() => nav('/projects')}
+                className="px-8 py-3.5 bg-white/10 hover:bg-white/20 backdrop-blur text-white border border-white/20 rounded-lg font-semibold text-base transition-colors flex items-center justify-center gap-2"
+              >
+                View Projects
+              </button>
             </motion.div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 80" fill="none" className="w-full"><path d="M0 40C240 80 480 0 720 40C960 80 1200 0 1440 40V80H0V40Z" fill="white"/></svg>
+        {/* Bottom stat strip */}
+        <div className="relative bg-green-800/95 backdrop-blur">
+          <div className="max-w-6xl mx-auto px-4 py-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-white text-center">
+            {[
+              { l: 'Projects', v: stats.totalProjects, i: Briefcase },
+              { l: 'Jobs Created', v: stats.totalJobs, i: Users },
+              { l: 'States + FCT', v: 37, i: MapPin },
+              { l: 'Completion', v: stats.completionRate, i: CheckCircle, s: '%' },
+            ].map(x => (
+              <div key={x.l}>
+                <x.i className="w-4 h-4 text-green-300 mx-auto mb-1" />
+                <div className="text-xl sm:text-2xl font-bold"><Counter target={x.v} suffix={x.s} /></div>
+                <div className="text-green-200/60 text-xs">{x.l}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ─── HEADLINE NUMBERS ─── */}
+      {/* ── INDICATORS ── */}
       <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8"
+          <SectionHead label="Key Indicators" title="National Development at a Glance" />
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5"
           >
             {[
-              { label: 'Roads Completed', value: stats.totalRoads, icon: Building2, color: 'text-blue-600 bg-blue-50' },
-              { label: 'Health Centers', value: stats.totalHealthCenters, icon: Heart, color: 'text-rose-600 bg-rose-50' },
-              { label: 'Schools Built', value: stats.totalSchoolsBuilt, icon: GraduationCap, color: 'text-indigo-600 bg-indigo-50' },
-              { label: 'Boreholes Drilled', value: stats.totalBoreholesDrilled, icon: Droplets, color: 'text-cyan-600 bg-cyan-50' },
-              { label: 'Households Connected', value: stats.totalHouseholdsConnected, icon: Zap, color: 'text-amber-600 bg-amber-50' },
-              { label: 'Housing Units', value: stats.totalHousingUnits, icon: Building2, color: 'text-orange-600 bg-orange-50' },
-              { label: 'Total Budget', value: 0, icon: Briefcase, color: 'text-green-600 bg-green-50', display: formatCurrency(stats.totalBudget) },
-              { label: 'Revenue (IGR)', value: 0, icon: BarChart3, color: 'text-teal-600 bg-teal-50', display: formatCurrency(stats.totalRevenueGenerated) },
-            ].map((item, i) => (
-              <motion.div key={item.label} variants={fadeUp} custom={i * 0.5}
-                className="text-center p-4 sm:p-6 rounded-2xl border hover:shadow-lg transition-shadow"
+              { l: 'Roads Completed', v: stats.totalRoads, I: Building2, c: 'text-blue-700 bg-blue-50' },
+              { l: 'Health Centers', v: stats.totalHealthCenters, I: Heart, c: 'text-rose-700 bg-rose-50' },
+              { l: 'Schools Built', v: stats.totalSchoolsBuilt, I: GraduationCap, c: 'text-indigo-700 bg-indigo-50' },
+              { l: 'Boreholes Drilled', v: stats.totalBoreholesDrilled, I: Droplets, c: 'text-cyan-700 bg-cyan-50' },
+              { l: 'Households Connected', v: stats.totalHouseholdsConnected, I: Zap, c: 'text-amber-700 bg-amber-50' },
+              { l: 'Housing Units', v: stats.totalHousingUnits, I: Building2, c: 'text-orange-700 bg-orange-50' },
+              { l: 'Total Budget', v: 0, I: Briefcase, c: 'text-green-700 bg-green-50', d: formatCurrency(stats.totalBudget) },
+              { l: 'Revenue (IGR)', v: 0, I: BarChart3, c: 'text-teal-700 bg-teal-50', d: formatCurrency(stats.totalRevenueGenerated) },
+            ].map((x, i) => (
+              <motion.div key={x.l} variants={fade} custom={i * 0.4}
+                className="bg-gray-50 text-center p-4 sm:p-5 rounded-xl hover:shadow-md transition-shadow"
               >
-                <div className={`w-12 h-12 rounded-xl ${item.color} flex items-center justify-center mx-auto mb-3`}>
-                  <item.icon className="w-6 h-6" />
-                </div>
-                <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                  {item.display || <AnimatedCounter target={item.value} />}
-                </div>
-                <div className="text-xs sm:text-sm text-gray-500 mt-1">{item.label}</div>
+                <div className={`w-10 h-10 rounded-lg ${x.c} flex items-center justify-center mx-auto mb-2`}><x.I className="w-5 h-5" /></div>
+                <div className="text-lg sm:text-xl font-bold text-gray-900">{x.d || <Counter target={x.v} />}</div>
+                <div className="text-xs text-gray-500 mt-0.5">{x.l}</div>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ─── HOW IT WORKS ─── */}
+      {/* ── HOW IT WORKS ── */}
       <section className="py-16 sm:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-            className="text-center mb-12 sm:mb-16"
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">Three simple steps to track your government's performance and hold leaders accountable.</p>
-          </motion.div>
-
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
+          <SectionHead label="Transparency" title="How It Works" />
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { step: '01', title: 'Track Projects', desc: 'Browse thousands of government projects across infrastructure, health, education, agriculture, and more. Filter by state, sector, or status.', icon: BarChart3, color: 'bg-green-600' },
-              { step: '02', title: 'View Evidence', desc: 'See real before & after photos, progress images, and video documentation for every project. Verify with your own eyes.', icon: Eye, color: 'bg-blue-600' },
-              { step: '03', title: 'Hold Accountable', desc: 'Share project data on social media, compare state performance, and demand transparency from your elected officials.', icon: Shield, color: 'bg-purple-600' },
-            ].map((item, i) => (
-              <motion.div key={item.step} variants={fadeUp} custom={i}
-                className="relative bg-white rounded-2xl p-8 border hover:shadow-xl transition-all group"
+              { n: '01', t: 'Track Projects', d: 'Browse government projects across all sectors. Filter by state, sector, or status to find what matters to you.', I: BarChart3 },
+              { n: '02', t: 'Verify Evidence', d: 'See real before & after photos, progress images, and video documentation. Verify every claim with your own eyes.', I: Eye },
+              { n: '03', t: 'Demand Accountability', d: 'Share project data on social media, compare state performance, and hold your elected officials accountable.', I: Shield },
+            ].map((x, i) => (
+              <motion.div key={x.n} variants={fade} custom={i}
+                className="bg-white rounded-xl p-7 border border-gray-200 hover:border-green-200 hover:shadow-lg transition-all relative overflow-hidden group"
               >
-                <div className="text-6xl font-black text-gray-100 absolute top-4 right-6">{item.step}</div>
-                <div className={`w-14 h-14 ${item.color} rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
-                  <item.icon className="w-7 h-7 text-white" />
+                <div className="absolute -top-2 -right-2 text-7xl font-black text-gray-100 group-hover:text-green-50 transition-colors">{x.n}</div>
+                <div className="relative">
+                  <div className="w-12 h-12 bg-green-700 rounded-xl flex items-center justify-center mb-4">
+                    <x.I className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{x.t}</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">{x.d}</p>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ─── FEATURED PROJECTS ─── */}
-      <section className="py-16 sm:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-            className="text-center mb-12"
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Featured Projects</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">Real projects, real impact. See what your government is delivering across Nigeria.</p>
-          </motion.div>
+      {/* ── BEFORE / AFTER SHOWCASE ── */}
+      {baProject && beforeImg && afterImg && (
+        <section className="py-16 sm:py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHead label="Evidence" title="See the Transformation" />
+            <motion.div initial="hidden" whileInView="show" viewport={{ once: true }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center"
+            >
+              <motion.div variants={fade} custom={0} className="space-y-4">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900">{baProject.name}</h3>
+                <p className="text-gray-600 leading-relaxed">{baProject.description}</p>
+                <div className="flex items-center gap-4 text-sm">
+                  <span className="font-semibold text-green-700">{baProject.progress}% Complete</span>
+                  <span className="text-gray-400">|</span>
+                  <span className="text-gray-600">{formatNumber(baProject.jobsCreated)} jobs created</span>
+                </div>
+                <button onClick={() => nav(`/projects/${baProject.id}`)}
+                  className="inline-flex items-center gap-2 text-green-700 font-semibold text-sm hover:text-green-800 transition-colors mt-2"
+                >
+                  View Full Project <ArrowRight className="w-4 h-4" />
+                </button>
+              </motion.div>
+              <motion.div variants={fade} custom={1} className="grid grid-cols-2 gap-3">
+                <div className="relative rounded-xl overflow-hidden aspect-[4/3]">
+                  <img src={beforeImg.url} alt="Before" className="w-full h-full object-cover" />
+                  <div className="absolute top-2 left-2 px-2.5 py-1 bg-red-600 text-white text-xs font-bold rounded">BEFORE</div>
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+                    <p className="text-white text-xs">{new Date(beforeImg.date).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <div className="relative rounded-xl overflow-hidden aspect-[4/3]">
+                  <img src={afterImg.url} alt="After" className="w-full h-full object-cover" />
+                  <div className="absolute top-2 left-2 px-2.5 py-1 bg-green-600 text-white text-xs font-bold rounded">AFTER</div>
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+                    <p className="text-white text-xs">{new Date(afterImg.date).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          >
+      {/* ── FEATURED PROJECTS ── */}
+      <section className="py-16 sm:py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHead label="Impact" title="Featured Projects" />
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {featured.map((p, i) => (
-              <motion.div key={p.id} variants={fadeUp} custom={i}
-                onClick={() => navigate(`/projects/${p.id}`)}
-                className="rounded-2xl border overflow-hidden hover:shadow-xl transition-all cursor-pointer group"
+              <motion.div key={p.id} variants={fade} custom={i}
+                onClick={() => nav(`/projects/${p.id}`)}
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
               >
                 {p.media[0] && (
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative h-44 overflow-hidden">
                     <img src={p.media[0].url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     {p.media[0].type === 'video' && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 bg-black/50 rounded-full flex items-center justify-center"><Play className="w-6 h-6 text-white ml-0.5" /></div>
-                      </div>
+                      <div className="absolute inset-0 flex items-center justify-center"><div className="w-11 h-11 bg-black/50 rounded-full flex items-center justify-center"><Play className="w-5 h-5 text-white ml-0.5" /></div></div>
                     )}
-                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                      <span className="text-white text-xs font-medium bg-white/20 px-2 py-1 rounded">{p.sector}</span>
-                    </div>
+                    <span className="absolute top-3 left-3 text-xs font-semibold bg-green-700 text-white px-2.5 py-1 rounded">{p.sector}</span>
                   </div>
                 )}
                 <div className="p-5">
-                  <h3 className="font-bold text-gray-900 mb-2 group-hover:text-green-700 transition-colors">{p.name}</h3>
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-4">{p.description}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1 text-sm font-semibold text-green-700">
-                      {p.progress}% complete
-                    </div>
-                    <div className="w-20 bg-gray-200 rounded-full h-2">
-                      <div className="bg-green-600 h-2 rounded-full" style={{ width: `${p.progress}%` }} />
-                    </div>
+                  <h3 className="font-bold text-gray-900 mb-1.5 group-hover:text-green-700 transition-colors">{p.name}</h3>
+                  <p className="text-sm text-gray-500 line-clamp-2 mb-3">{p.description}</p>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-gray-200 rounded-full h-1.5"><div className="bg-green-600 h-1.5 rounded-full" style={{ width: `${p.progress}%` }} /></div>
+                    <span className="text-xs font-semibold text-green-700">{p.progress}%</span>
                   </div>
                 </div>
               </motion.div>
             ))}
           </motion.div>
-
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={3}
-            className="text-center mt-10"
-          >
-            <button onClick={() => navigate('/projects')}
-              className="px-8 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors inline-flex items-center gap-2"
-            >
-              View All Projects <ArrowRight className="w-5 h-5" />
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fade} custom={3} className="text-center mt-10">
+            <button onClick={() => nav('/projects')} className="px-7 py-3 bg-green-700 text-white rounded-lg font-semibold hover:bg-green-800 transition-colors inline-flex items-center gap-2 text-sm">
+              View All Projects <ArrowRight className="w-4 h-4" />
             </button>
           </motion.div>
         </div>
       </section>
 
-      {/* ─── ZONE HIGHLIGHTS ─── */}
-      <section className="py-16 sm:py-20 bg-gray-50">
+      {/* ── ZONES ── */}
+      <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-            className="text-center mb-12"
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Performance Across All Zones</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">Development is reaching every corner of Nigeria. Explore performance by geopolitical zone.</p>
-          </motion.div>
+          <SectionHead label="Coverage" title="All Six Geopolitical Zones" />
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {zones.map((z, i) => {
+              const zoneStates = states.filter(s => s.zone === z.zone);
+              const completionRate = z.projects > 0 ? Math.round((zoneStates.reduce((a, s) => a + s.completedProjects, 0) / z.projects) * 100) : 0;
+              const totalRoads = zoneStates.reduce((a, s) => a + s.roadsCompleted, 0);
+              const totalBudget = zoneStates.reduce((a, s) => a + s.budget, 0);
+              return (
+                <motion.div key={z.zone} variants={fade} custom={i}
+                  onClick={() => nav('/dashboard')}
+                  className="rounded-xl bg-white border border-gray-200 hover:shadow-lg transition-all cursor-pointer group p-5"
+                >
+                  {/* Top row */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <MapPin className="w-4 h-4 text-gray-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 text-sm leading-tight">{z.zone}</h3>
+                        <span className="text-[11px] text-gray-400">{z.count} states</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-gray-900">{completionRate}%</div>
+                      <div className="text-[10px] text-gray-400 uppercase tracking-wide">Complete</div>
+                    </div>
+                  </div>
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-          >
-            {zoneData.map((z, i) => (
-              <motion.div key={z.zone} variants={scaleIn} custom={i}
-                className="bg-white rounded-2xl border p-6 hover:shadow-lg transition-all"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-gray-900">{z.zone}</h3>
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">{z.states} states</span>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-2xl font-bold text-gray-900">{formatNumber(z.projects)}</div>
-                    <div className="text-xs text-gray-500">Projects</div>
+                  {/* Progress bar */}
+                  <div className="w-full bg-gray-100 rounded-full h-1.5 mb-5">
+                    <div
+                      className="h-1.5 rounded-full transition-all"
+                      style={{
+                        width: `${completionRate}%`,
+                        backgroundColor: completionRate >= 65 ? '#16a34a' : completionRate >= 45 ? '#d97706' : '#dc2626',
+                      }}
+                    />
                   </div>
-                  <div>
-                    <div className="text-2xl font-bold text-green-700">{formatNumber(z.jobs)}</div>
-                    <div className="text-xs text-gray-500">Jobs Created</div>
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-4 gap-2 text-center">
+                    {[
+                      { label: 'Projects', value: formatNumber(z.projects) },
+                      { label: 'Jobs', value: formatNumber(z.jobs) },
+                      { label: 'Roads', value: formatNumber(totalRoads) },
+                      { label: 'Budget', value: formatCurrency(totalBudget) },
+                    ].map(stat => (
+                      <div key={stat.label}>
+                        <div className="text-sm font-bold text-gray-900">{stat.value}</div>
+                        <div className="text-[10px] text-gray-400">{stat.label}</div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>
 
-      {/* ─── PRESIDENTIAL MANDATE ─── */}
-      <section className="py-16 sm:py-24 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-10 left-10 w-40 h-40 border border-white rounded-full" />
-          <div className="absolute bottom-10 right-10 w-60 h-60 border border-white rounded-full" />
-        </div>
-
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <motion.div variants={fadeUp} custom={0}>
-              <CoatOfArms className="w-16 h-16 mx-auto mb-6 opacity-60" />
-            </motion.div>
-            <motion.blockquote variants={fadeUp} custom={1}
-              className="text-xl sm:text-2xl md:text-3xl font-light leading-relaxed mb-8 italic text-gray-200"
-            >
-              "Our administration is committed to transparency and accountability. Every naira spent must be accounted for, every project must deliver value, and every Nigerian must have access to the truth about how their government is performing."
+      {/* ── MANDATE ── */}
+      <section className="relative py-20 sm:py-28 overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80&fit=crop" alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-green-900/85" />
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center text-white">
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }}>
+            <motion.div variants={fade} custom={0}><CoatOfArms className="w-14 h-14 mx-auto mb-5 opacity-70" /></motion.div>
+            <motion.blockquote variants={fade} custom={1} className="text-lg sm:text-xl md:text-2xl font-light leading-relaxed mb-6 text-white/90 italic">
+              "Our administration is committed to transparency and accountability. Every naira spent must be accounted for, every project must deliver value, and every Nigerian must have access to the truth."
             </motion.blockquote>
-            <motion.div variants={fadeUp} custom={2}>
-              <div className="w-16 h-0.5 bg-green-500 mx-auto mb-4" />
-              <p className="text-green-400 font-semibold text-lg">The Renewed Hope Agenda</p>
-              <p className="text-gray-400 text-sm mt-1">Federal Government of Nigeria</p>
+            <motion.div variants={fade} custom={2}>
+              <div className="w-12 h-px bg-yellow-400 mx-auto mb-3" />
+              <p className="text-yellow-300 font-semibold text-sm">The Renewed Hope Agenda</p>
+              <p className="text-white/50 text-xs mt-1">Federal Government of Nigeria</p>
             </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* ─── FINAL CTA ─── */}
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <motion.h2 variants={fadeUp} custom={0}
-              className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4"
-            >
+      {/* ── CTA ── */}
+      <section className="py-16 sm:py-24 bg-gray-50">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <motion.div initial="hidden" whileInView="show" viewport={{ once: true }}>
+            <motion.div variants={fade} custom={0}><CoatOfArms className="w-10 h-10 mx-auto mb-3 opacity-20" /></motion.div>
+            <motion.h2 variants={fade} custom={1} className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
               Ready to Track Your Government?
             </motion.h2>
-            <motion.p variants={fadeUp} custom={1}
-              className="text-gray-600 text-lg max-w-2xl mx-auto mb-10"
-            >
-              Access real-time data on {formatNumber(stats.totalProjects)} projects across {states.length} states. Your right to know. Your power to demand accountability.
+            <motion.p variants={fade} custom={2} className="text-gray-500 max-w-xl mx-auto mb-8">
+              {formatNumber(stats.totalProjects)} projects. {states.length} states. Your right to know.
             </motion.p>
-            <motion.div variants={fadeUp} custom={2}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
-              <button onClick={() => navigate('/dashboard')}
-                className="px-10 py-4 bg-green-700 text-white rounded-xl font-bold text-lg hover:bg-green-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-              >
-                Go to Dashboard <ArrowRight className="w-5 h-5" />
+            <motion.div variants={fade} custom={3} className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button onClick={() => nav('/dashboard')} className="px-8 py-3.5 bg-green-700 text-white rounded-lg font-semibold hover:bg-green-800 transition-colors shadow-md flex items-center justify-center gap-2">
+                Go to Dashboard <ArrowRight className="w-4 h-4" />
               </button>
-              <button onClick={() => navigate('/analytics')}
-                className="px-10 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
-              >
-                <BarChart3 className="w-5 h-5" /> View Analytics
+              <button onClick={() => nav('/analytics')} className="px-8 py-3.5 border-2 border-green-700 text-green-700 rounded-lg font-semibold hover:bg-green-50 transition-colors flex items-center justify-center gap-2">
+                <BarChart3 className="w-4 h-4" /> Analytics
               </button>
             </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* ─── MINI FOOTER ─── */}
-      <div className="bg-gray-900 text-gray-400 py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <CoatOfArms className="w-6 h-6 opacity-50" />
-            <span className="text-xs">&copy; {new Date().getFullYear()} Federal Government of Nigeria</span>
-          </div>
-          <span className="text-xs text-gray-500">Renewed Hope Agenda &middot; Transparency &middot; Accountability &middot; Good Governance</span>
+      {/* ── FOOTER ── */}
+      <div className="h-1.5 flex"><div className="flex-1 bg-green-700" /><div className="flex-1 bg-white border-y border-gray-100" /><div className="flex-1 bg-green-700" /></div>
+      <div className="bg-white py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="flex items-center gap-2"><CoatOfArms className="w-7 h-7 opacity-30" /><span className="text-xs text-gray-400">&copy; {new Date().getFullYear()} Federal Government of Nigeria</span></div>
+          <span className="text-xs text-gray-400">Renewed Hope Agenda &middot; Transparency &middot; Accountability</span>
         </div>
       </div>
     </div>
+  );
+}
+
+function SectionHead({ label, title }: { label: string; title: string }) {
+  return (
+    <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fade} className="text-center mb-10 sm:mb-12">
+      <p className="text-green-700 text-xs font-bold tracking-[0.2em] uppercase mb-1.5">{label}</p>
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">{title}</h2>
+      <div className="w-12 h-px bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto" />
+    </motion.div>
   );
 }
