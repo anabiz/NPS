@@ -757,7 +757,82 @@ export const states: State[] = [
   },
 ];
 
-export const projects: Project[] = [
+const projectTemplates = [
+  { sector: 'Infrastructure', names: ['{lga} Road Rehabilitation', '{lga} Bridge Construction', '{lga} Drainage System Upgrade', '{lga} Market Complex Construction'], descs: ['Rehabilitation of major roads and installation of drainage systems to improve transportation.', 'Construction of a modern bridge to connect communities and improve trade routes.', 'Upgrade of the drainage infrastructure to prevent flooding during rainy season.', 'Construction of a modern market complex with storage facilities.'] },
+  { sector: 'Health', names: ['{lga} Primary Health Center', '{lga} General Hospital Upgrade', '{lga} Maternal Health Clinic'], descs: ['Construction of a new primary health center to serve the local community.', 'Renovation and equipment upgrade of the general hospital.', 'Establishment of a maternal and child health clinic with modern facilities.'] },
+  { sector: 'Education', names: ['{lga} Model School Construction', '{lga} School Renovation Project', '{lga} ICT Learning Center'], descs: ['Construction of a model secondary school with laboratories and library.', 'Renovation of primary and secondary schools across the LGA.', 'Establishment of an ICT learning center for digital skills training.'] },
+  { sector: 'Water', names: ['{lga} Borehole Drilling Project', '{lga} Water Treatment Plant', '{lga} Rural Water Supply Scheme'], descs: ['Drilling of boreholes to provide clean water to underserved communities.', 'Construction of a water treatment plant for safe drinking water.', 'Installation of water supply infrastructure in rural areas.'] },
+  { sector: 'Agriculture', names: ['{lga} Irrigation Project', '{lga} Farm Settlement Scheme', '{lga} Agro-Processing Center'], descs: ['Development of irrigation infrastructure to boost farming output.', 'Establishment of a modern farm settlement with storage facilities.', 'Construction of an agro-processing center for local farmers.'] },
+  { sector: 'Power', names: ['{lga} Rural Electrification', '{lga} Solar Mini-Grid Project', '{lga} Power Distribution Upgrade'], descs: ['Extension of electricity to unserved rural communities.', 'Installation of solar mini-grids for sustainable power supply.', 'Upgrade of power distribution infrastructure to reduce outages.'] },
+  { sector: 'Employment', names: ['{lga} Skills Acquisition Center', '{lga} Youth Empowerment Hub', '{lga} Vocational Training Institute'], descs: ['Establishment of a skills acquisition center for youth empowerment.', 'Construction of a youth empowerment hub for entrepreneurship training.', 'Development of a vocational training institute for technical skills.'] },
+  { sector: 'Transportation', names: ['{lga} Bus Terminal Construction', '{lga} Rural Road Network', '{lga} Transport Hub Development'], descs: ['Construction of a modern bus terminal to improve public transportation.', 'Development of rural road networks connecting farming communities.', 'Establishment of an integrated transport hub for the LGA.'] },
+];
+
+const stockImages: Record<string, string[]> = {
+  Infrastructure: ['https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&h=400&fit=crop'],
+  Health: ['https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1504439468489-c8920d796a29?w=600&h=400&fit=crop'],
+  Education: ['https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop'],
+  Water: ['https://images.unsplash.com/photo-1504972090739-0e2f52b61b0e?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1541544537156-7627a7a4aa1c?w=600&h=400&fit=crop'],
+  Agriculture: ['https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&h=400&fit=crop'],
+  Power: ['https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&h=400&fit=crop'],
+  Employment: ['https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop'],
+  Transportation: ['https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1532939163844-547f958e91b4?w=600&h=400&fit=crop', 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=400&fit=crop'],
+};
+
+function generateLGAProjects(): Project[] {
+  const generated: Project[] = [];
+  let idCounter = 100;
+  for (const state of states) {
+    for (const lga of state.lgas) {
+      const seed = lga.id.length * 31 + lga.name.charCodeAt(0);
+      const r = (offset: number) => seededRandom(seed + offset);
+      const count = Math.floor(r(1) * 3) + 2; // 2-4 projects per LGA
+      for (let j = 0; j < count; j++) {
+        const tplIdx = Math.floor(r(10 + j * 7) * projectTemplates.length);
+        const tpl = projectTemplates[tplIdx];
+        const nameIdx = Math.floor(r(20 + j * 3) * tpl.names.length);
+        const descIdx = Math.floor(r(30 + j * 5) * tpl.descs.length);
+        const status = lga.status;
+        const progress = status === 'completed' ? 100 : status === 'in-progress' ? Math.floor(r(40 + j) * 50) + 30 : status === 'delayed' ? Math.floor(r(41 + j) * 30) + 10 : 0;
+        const budget = Math.floor(r(50 + j) * 4000000000) + 500000000;
+        const spent = Math.floor(budget * (progress / 100) * (0.8 + r(60 + j) * 0.4));
+        const jobs = Math.floor(r(70 + j) * 2000) + 200;
+        const imgs = stockImages[tpl.sector] || stockImages.Infrastructure;
+        const imgIdx = Math.floor(r(80 + j) * imgs.length);
+        const tags: Array<'before' | 'progress' | 'after'> = progress === 100 ? ['before', 'after'] : progress > 0 ? ['before', 'progress'] : ['before'];
+        const media: MediaItem[] = tags.map((tag, mi) => ({
+          id: `gen-${idCounter}-${mi}`,
+          type: 'image' as MediaType,
+          url: imgs[(imgIdx + mi) % imgs.length],
+          caption: `${tag.charAt(0).toUpperCase() + tag.slice(1)} — ${tpl.names[nameIdx].replace('{lga}', lga.name)}`,
+          date: tag === 'before' ? '2024-01-15' : tag === 'progress' ? '2025-06-20' : '2026-01-10',
+          tag,
+        }));
+        generated.push({
+          id: `proj-gen-${idCounter++}`,
+          name: tpl.names[nameIdx].replace('{lga}', lga.name),
+          sector: tpl.sector,
+          location: lga.name + ', ' + state.name,
+          state: state.name,
+          lga: lga.name,
+          status,
+          progress,
+          startDate: '2024-01-15',
+          endDate: status === 'completed' ? '2025-12-30' : '2027-06-30',
+          budget,
+          spent,
+          jobsCreated: jobs,
+          description: tpl.descs[descIdx],
+          media,
+          impact: { beneficiaries: Math.floor(r(90 + j) * 50000) + 5000 },
+        });
+      }
+    }
+  }
+  return generated;
+}
+
+const handwrittenProjects: Project[] = [
   {
     id: 'proj-001',
     name: 'Lagos-Ibadan Expressway Rehabilitation',
@@ -941,6 +1016,11 @@ export const projects: Project[] = [
     ],
     impact: { beneficiaries: 450000 },
   },
+];
+
+export const projects: Project[] = [
+  ...handwrittenProjects,
+  ...generateLGAProjects(),
 ];
 
 export const metrics: Metric[] = [

@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router';
-import { projects, sectors, states, Status } from '../data/mockData';
+import { projects, sectors, states } from '../data/mockData';
 import { ProjectCard } from '../components/ProjectCard';
-import { ArrowLeft, Filter, Search } from 'lucide-react';
+import { ArrowLeft, Filter, Search, Loader2 } from 'lucide-react';
+
+const PAGE_SIZE = 12;
 
 export function Projects() {
   const navigate = useNavigate();
@@ -13,16 +15,51 @@ export function Projects() {
   const [selectedSector, setSelectedSector] = useState<string>('all');
   const [selectedState, setSelectedState] = useState<string>(initialState || 'all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [loading, setLoading] = useState(false);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         project.description.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredProjects = useMemo(() => projects.filter(project => {
+    const matchesSearch = searchQuery === '' ||
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.location.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesSector = selectedSector === 'all' || project.sector === selectedSector;
     const matchesState = selectedState === 'all' || project.state === selectedState;
     const matchesStatus = selectedStatus === 'all' || project.status === selectedStatus;
-
     return matchesSearch && matchesSector && matchesState && matchesStatus;
-  });
+  }), [searchQuery, selectedSector, selectedState, selectedStatus]);
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [searchQuery, selectedSector, selectedState, selectedStatus]);
+
+  const hasMore = visibleCount < filteredProjects.length;
+
+  const loadMore = useCallback(() => {
+    if (!hasMore || loading) return;
+    setLoading(true);
+    // Small delay to show spinner and feel natural
+    setTimeout(() => {
+      setVisibleCount(prev => Math.min(prev + PAGE_SIZE, filteredProjects.length));
+      setLoading(false);
+    }, 400);
+  }, [hasMore, loading, filteredProjects.length]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const el = loaderRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting) loadMore(); },
+      { rootMargin: '200px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loadMore]);
+
+  const visibleProjects = filteredProjects.slice(0, visibleCount);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -108,7 +145,7 @@ export function Projects() {
 
           <div className="mt-4 pt-4 border-t flex items-center justify-between">
             <p className="text-sm text-gray-600">
-              Showing {filteredProjects.length} of {projects.length} projects
+              Showing {visibleProjects.length} of {filteredProjects.length} projects
             </p>
             {(searchQuery || selectedSector !== 'all' || selectedState !== 'all' || selectedStatus !== 'all') && (
               <button
@@ -126,12 +163,39 @@ export function Projects() {
           </div>
         </div>
 
-        {filteredProjects.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map(project => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
+        {visibleProjects.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {visibleProjects.map(project => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  onClick={() => navigate(`/projects/${project.id}`)}
+                />
+              ))}
+            </div>
+
+            {/* Infinite scroll trigger */}
+            <div ref={loaderRef} className="py-10 flex flex-col items-center gap-2">
+              {loading && (
+                <div className="flex items-center gap-2 text-green-700">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span className="text-sm font-medium">Loading more projects...</span>
+                </div>
+              )}
+              {!loading && hasMore && (
+                <button
+                  onClick={loadMore}
+                  className="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  Load More ({filteredProjects.length - visibleCount} remaining)
+                </button>
+              )}
+              {!hasMore && filteredProjects.length > PAGE_SIZE && (
+                <p className="text-sm text-gray-400">All {filteredProjects.length} projects loaded</p>
+              )}
+            </div>
+          </>
         ) : (
           <div className="bg-white rounded-lg border p-12 text-center">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No Projects Found</h3>
