@@ -411,13 +411,89 @@ export function Landing() {
       </section>
 
       {/* ── FOOTER ── */}
-      <div className="h-1.5 flex"><div className="flex-1 bg-green-700" /><div className="flex-1 bg-white border-y border-gray-100" /><div className="flex-1 bg-green-700" /></div>
-      <div className="bg-white py-5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center gap-2"><CoatOfArms className="w-7 h-7 opacity-30" /><span className="text-xs text-gray-400">&copy; {new Date().getFullYear()} Federal Government of Nigeria</span></div>
-          <span className="text-xs text-gray-400">Renewed Hope Agenda &middot; Transparency &middot; Accountability</span>
+      <footer className="bg-gray-900 text-gray-300">
+        <div className="h-1.5 flex">
+          <div className="flex-1 bg-green-700" />
+          <div className="flex-1 bg-white" />
+          <div className="flex-1 bg-green-700" />
         </div>
-      </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <CoatOfArms className="w-10 h-10" />
+                <div>
+                  <div className="text-white font-bold text-lg leading-tight">Nigeria NPS</div>
+                  <div className="text-xs text-gray-400">National Performance Scorecard</div>
+                </div>
+              </div>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                An initiative of the Federal Government of Nigeria to promote transparency, accountability, and citizen engagement in tracking national development across all 36 states and the FCT.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">Quick Links</h3>
+              <ul className="space-y-2.5">
+                {[
+                  { label: 'National Dashboard', path: '/dashboard' },
+                  { label: 'All Projects', path: '/projects' },
+                  { label: 'Performance Analytics', path: '/analytics' },
+                ].map(link => (
+                  <li key={link.path}>
+                    <button onClick={() => nav(link.path)} className="text-sm text-gray-400 hover:text-green-400 transition-colors">
+                      {link.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">Government Resources</h3>
+              <ul className="space-y-2.5">
+                {[
+                  { href: 'https://statehouse.gov.ng', label: 'Office of the President' },
+                  { href: 'https://www.budgetoffice.gov.ng', label: 'Budget Office of the Federation' },
+                  { href: 'https://nbs.gov.ng', label: 'National Bureau of Statistics' },
+                  { href: 'https://opentreasury.gov.ng', label: 'Open Treasury Portal' },
+                  { href: 'https://www.icpc.gov.ng', label: 'ICPC' },
+                ].map(link => (
+                  <li key={link.href}>
+                    <a href={link.href} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-green-400 transition-colors">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">Contact</h3>
+              <ul className="space-y-3 text-sm text-gray-400">
+                <li className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                  Federal Secretariat, Shehu Shagari Way, Three Arms Zone, Abuja, FCT
+                </li>
+                <li>+234 (0) 9 234 5678</li>
+                <li>info@nps.gov.ng</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-800" />
+
+          <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-gray-500">
+              &copy; {new Date().getFullYear()} Federal Government of Nigeria. All rights reserved.
+            </p>
+            <p className="text-xs text-gray-600 text-center sm:text-right">
+              Powered by the Renewed Hope Agenda &mdash; Transparency &middot; Accountability &middot; Good Governance
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
