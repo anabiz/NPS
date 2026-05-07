@@ -83,7 +83,7 @@ export function Home() {
                   <Building className="w-6 h-6 sm:w-8 sm:h-8" />
                 </div>
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
-                  Nigeria National Performance Scorecard
+                  Renewed Hope Performance Scorecard
                 </h1>
               </div>
               <p className="text-green-100 text-xs sm:text-sm max-w-2xl">

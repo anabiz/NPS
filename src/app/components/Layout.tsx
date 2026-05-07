@@ -27,8 +27,8 @@ export function Layout() {
               <Link to="/" className="flex items-center gap-2.5">
                 <img src="/renewed-hope-logo.png" alt="Renewed Hope" className="h-10 sm:h-12 w-auto" />
                 <div className="hidden sm:block leading-tight">
-                  <div className="text-sm font-bold text-gray-900">Nigeria NPS</div>
-                  <div className="text-[10px] text-gray-500">National Performance Scorecard</div>
+                  <div className="text-sm font-bold text-gray-900">Renewed Hope</div>
+                  <div className="text-[10px] text-gray-500">Performance Scorecard</div>
                 </div>
               </Link>
             </div>

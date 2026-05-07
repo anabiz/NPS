@@ -60,10 +60,10 @@ export function Landing() {
           <div className="flex items-center gap-2">
             <img src="/renewed-hope-logo.png" alt="Renewed Hope" className="h-10 sm:h-12 w-auto" />
             <div className="hidden sm:block leading-tight">
-              <div className="text-sm font-bold text-gray-900">Nigeria NPS</div>
-              <div className="text-[10px] text-gray-500">National Performance Scorecard</div>
+              <div className="text-sm font-bold text-gray-900">Renewed Hope</div>
+              <div className="text-[10px] text-gray-500">Performance Scorecard</div>
             </div>
-            <span className="sm:hidden text-xs font-bold text-gray-900">Nigeria NPS</span>
+            <span className="sm:hidden text-xs font-bold text-gray-900">Renewed Hope</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
             <button onClick={() => nav('/dashboard')} className="hover:text-green-700 transition-colors">Dashboard</button>
@@ -112,8 +112,8 @@ export function Landing() {
               className="w-14 sm:w-20 h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent mx-auto mb-4 sm:mb-6" />
 
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.7 }}
-              className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-extrabold leading-[1.1] mb-3 sm:mb-5 tracking-tight">
-              National Performance<br />Scorecard
+              className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.1] mb-3 sm:mb-5 tracking-tight">
+              Renewed Hope Performance<br />Scorecard
             </motion.h1>
 
             <motion.p initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1, duration: 0.6 }}
