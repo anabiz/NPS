@@ -100,7 +100,7 @@ export function Landing() {
         <motion.div style={{ opacity: heroOpacity }} className="relative flex-1 flex items-center justify-center">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center text-white py-6 sm:py-10">
             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}>
-              <img src="/renewed-hope-logo.png" alt="Renewed Hope" className="h-14 sm:h-24 lg:h-28 w-auto mx-auto mb-4 sm:mb-6 drop-shadow-xl" />
+              <img src="/renewed-hope-logo.png" alt="Renewed Hope" className="h-20 sm:h-32 lg:h-36 w-auto mx-auto mb-4 sm:mb-6 drop-shadow-xl" />
             </motion.div>
 
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
