@@ -58,7 +58,7 @@ export function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/60">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between h-12 sm:h-16">
           <div className="flex items-center gap-2">
-            <CoatOfArms className="w-7 h-7 sm:w-8 sm:h-8" />
+            <img src="/renewed-hope-logo.png" alt="Renewed Hope" className="h-10 sm:h-12 w-auto" />
             <div className="hidden sm:block leading-tight">
               <div className="text-sm font-bold text-gray-900">Nigeria NPS</div>
               <div className="text-[10px] text-gray-500">National Performance Scorecard</div>
@@ -100,7 +100,7 @@ export function Landing() {
         <motion.div style={{ opacity: heroOpacity }} className="relative flex-1 flex items-center justify-center">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center text-white py-6 sm:py-10">
             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}>
-              <CoatOfArms className="w-16 h-16 sm:w-28 sm:h-28 lg:w-32 lg:h-32 mx-auto mb-4 sm:mb-6 drop-shadow-xl" />
+              <img src="/renewed-hope-logo.png" alt="Renewed Hope" className="h-14 sm:h-24 lg:h-28 w-auto mx-auto mb-4 sm:mb-6 drop-shadow-xl" />
             </motion.div>
 
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
@@ -363,7 +363,7 @@ export function Landing() {
         <div className="absolute inset-0 bg-green-900/85" />
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center text-white">
           <motion.div initial="hidden" whileInView="show" viewport={{ once: true }}>
-            <motion.div variants={fade} custom={0}><CoatOfArms className="w-10 h-10 sm:w-14 sm:h-14 mx-auto mb-4 sm:mb-5 opacity-70" /></motion.div>
+            <motion.div variants={fade} custom={0}><img src="/renewed-hope-logo.png" alt="Renewed Hope" className="h-10 sm:h-14 w-auto mx-auto mb-4 sm:mb-5 opacity-70" /></motion.div>
             <motion.blockquote variants={fade} custom={1} className="text-sm sm:text-xl md:text-2xl font-light leading-relaxed mb-4 sm:mb-6 text-white/90 italic px-2">
               "Every naira spent must be accounted for, every project must deliver value, and every Nigerian must have access to the truth."
             </motion.blockquote>
@@ -380,7 +380,7 @@ export function Landing() {
       <section className="py-12 sm:py-24 bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <motion.div initial="hidden" whileInView="show" viewport={{ once: true }}>
-            <motion.div variants={fade} custom={0}><CoatOfArms className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-2 sm:mb-3 opacity-20" /></motion.div>
+            <motion.div variants={fade} custom={0}><img src="/renewed-hope-logo.png" alt="Renewed Hope" className="h-8 sm:h-10 w-auto mx-auto mb-2 sm:mb-3 opacity-20" /></motion.div>
             <motion.h2 variants={fade} custom={1} className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">
               Ready to Track Your Government?
             </motion.h2>
@@ -399,60 +399,13 @@ export function Landing() {
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className="bg-gray-900 text-gray-300">
-        <div className="h-1 sm:h-1.5 flex"><div className="flex-1 bg-green-700" /><div className="flex-1 bg-white" /><div className="flex-1 bg-green-700" /></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Mobile: 2 cols, Desktop: 4 cols */}
-          <div className="py-8 sm:py-12 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10">
-            <div className="col-span-2 lg:col-span-1">
-              <div className="flex items-center gap-2.5 mb-3">
-                <CoatOfArms className="w-8 h-8 sm:w-10 sm:h-10" />
-                <div>
-                  <div className="text-white font-bold text-sm sm:text-lg leading-tight">Nigeria NPS</div>
-                  <div className="text-[10px] sm:text-xs text-gray-400">National Performance Scorecard</div>
-                </div>
-              </div>
-              <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
-                An initiative of the Federal Government of Nigeria to promote transparency and accountability.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold text-xs sm:text-sm uppercase tracking-wider mb-3">Quick Links</h3>
-              <ul className="space-y-2">
-                {[{ l: 'Dashboard', p: '/dashboard' }, { l: 'Projects', p: '/projects' }, { l: 'Analytics', p: '/analytics' }].map(lk => (
-                  <li key={lk.p}><button onClick={() => nav(lk.p)} className="text-xs sm:text-sm text-gray-400 hover:text-green-400 transition-colors">{lk.l}</button></li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-semibold text-xs sm:text-sm uppercase tracking-wider mb-3">Resources</h3>
-              <ul className="space-y-2">
-                {[
-                  { h: 'https://statehouse.gov.ng', l: 'Office of the President' },
-                  { h: 'https://nbs.gov.ng', l: 'Bureau of Statistics' },
-                  { h: 'https://opentreasury.gov.ng', l: 'Open Treasury' },
-                ].map(lk => (
-                  <li key={lk.h}><a href={lk.h} target="_blank" rel="noopener noreferrer" className="text-xs sm:text-sm text-gray-400 hover:text-green-400 transition-colors">{lk.l}</a></li>
-                ))}
-              </ul>
-            </div>
-            <div className="hidden lg:block">
-              <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-3">Contact</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li className="flex items-start gap-2"><MapPin className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />Federal Secretariat, Abuja, FCT</li>
-                <li>+234 (0) 9 234 5678</li>
-                <li>info@nps.gov.ng</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800" />
-          <div className="py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p className="text-[10px] sm:text-xs text-gray-500">&copy; {new Date().getFullYear()} Federal Government of Nigeria</p>
-            <p className="text-[10px] sm:text-xs text-gray-600">Renewed Hope Agenda &middot; Transparency &middot; Accountability</p>
-          </div>
+      {/* Copyright */}
+      <div className="bg-gray-100 border-t py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="text-xs text-gray-500">&copy; {new Date().getFullYear()} Federal Government of Nigeria. All rights reserved.</p>
+          <p className="text-xs text-gray-400">Renewed Hope Agenda &middot; Transparency &middot; Accountability &middot; Good Governance</p>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }
