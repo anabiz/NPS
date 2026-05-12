@@ -1,11 +1,13 @@
+# Renewed Hope Performance Scorecard
 
-  # Nigeria National Performance Scorecard
+Real-time transparency into government performance across all 36 states and the FCT.
 
-  This is a code bundle for Nigeria National Performance Scorecard. The original project is available at https://www.figma.com/design/ghaSvawEpEU2UEWRCrsdO1/Nigeria-National-Performance-Scorecard.
+## Running the code
 
-  ## Running the code
+Run `npm i` to install the dependencies.
 
-  Run `npm i` to install the dependencies.
+Run `npm run dev` to start the development server.
 
-  Run `npm run dev` to start the development server.
-  
+## Setup
+
+Save the Renewed Hope logo image as `public/renewed-hope-logo.png` for the logo to display across the app and browser tab.

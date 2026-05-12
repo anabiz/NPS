@@ -7,6 +7,7 @@ import { Projects } from './pages/Projects';
 import { Analytics } from './pages/Analytics';
 import { Layout } from './components/Layout';
 import { ProjectDetail } from './pages/ProjectDetail';
+import { Initiatives } from './pages/Initiatives';
 
 export const router = createBrowserRouter([
   { path: '/', Component: Landing },
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
     Component: Layout,
     children: [
       { path: 'dashboard', Component: Home },
+      { path: 'initiatives', Component: Initiatives },
       { path: 'projects', Component: Projects },
       { path: 'projects/:projectId', Component: ProjectDetail },
       { path: 'analytics', Component: Analytics },

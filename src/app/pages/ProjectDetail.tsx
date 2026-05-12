@@ -58,26 +58,26 @@ export function ProjectDetail() {
 
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Key metrics */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8">
-          <div className="bg-white rounded-lg border p-3 sm:p-5 text-center">
-            <DollarSign className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-            <div className="text-base sm:text-xl font-bold">{formatCurrency(project.budget)}</div>
-            <div className="text-xs text-gray-500">Budget</div>
+        <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6">
+          <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
+            <DollarSign className="w-4 h-4 text-blue-600 mx-auto mb-0.5" />
+            <div className="text-xs sm:text-sm font-bold">{formatCurrency(project.budget)}</div>
+            <div className="text-[10px] sm:text-xs text-gray-500">Budget</div>
           </div>
-          <div className="bg-white rounded-lg border p-3 sm:p-5 text-center">
-            <DollarSign className="w-5 h-5 text-green-600 mx-auto mb-1" />
-            <div className="text-base sm:text-xl font-bold">{formatCurrency(project.spent)}</div>
-            <div className="text-xs text-gray-500">Spent</div>
+          <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
+            <DollarSign className="w-4 h-4 text-green-600 mx-auto mb-0.5" />
+            <div className="text-xs sm:text-sm font-bold">{formatCurrency(project.spent)}</div>
+            <div className="text-[10px] sm:text-xs text-gray-500">Spent</div>
           </div>
-          <div className="bg-white rounded-lg border p-3 sm:p-5 text-center">
-            <Users className="w-5 h-5 text-purple-600 mx-auto mb-1" />
-            <div className="text-base sm:text-xl font-bold">{formatNumber(project.jobsCreated)}</div>
-            <div className="text-xs text-gray-500">Jobs Created</div>
+          <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
+            <Users className="w-4 h-4 text-purple-600 mx-auto mb-0.5" />
+            <div className="text-xs sm:text-sm font-bold">{formatNumber(project.jobsCreated)}</div>
+            <div className="text-[10px] sm:text-xs text-gray-500">Jobs</div>
           </div>
-          <div className="bg-white rounded-lg border p-3 sm:p-5 text-center">
-            <Calendar className="w-5 h-5 text-amber-600 mx-auto mb-1" />
-            <div className="text-base sm:text-xl font-bold">{project.progress}%</div>
-            <div className="text-xs text-gray-500">Progress</div>
+          <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
+            <Calendar className="w-4 h-4 text-amber-600 mx-auto mb-0.5" />
+            <div className="text-xs sm:text-sm font-bold">{project.progress}%</div>
+            <div className="text-[10px] sm:text-xs text-gray-500">Progress</div>
           </div>
         </div>
 
@@ -98,11 +98,50 @@ export function ProjectDetail() {
 
         {/* Description */}
         <div className="bg-white rounded-lg border p-6 mb-8">
-          <h2 className="text-lg font-bold mb-3">About This Project</h2>
-          <p className="text-gray-600">{project.description}</p>
-          {project.impact.beneficiaries && (
-            <div className="mt-4 pt-4 border-t text-sm text-gray-500">
-              Estimated beneficiaries: {formatNumber(project.impact.beneficiaries)}
+          <h2 className="text-lg font-bold mb-4">About This Project</h2>
+          <div className="prose prose-sm sm:prose-base max-w-none text-gray-600">
+            {project.description.split('. ').reduce((acc: string[][], sentence, i, arr) => {
+              // Group sentences into paragraphs of 2-3 sentences
+              const lastGroup = acc[acc.length - 1];
+              if (lastGroup && lastGroup.length < 3) {
+                lastGroup.push(sentence + (i < arr.length - 1 ? '.' : ''));
+              } else {
+                acc.push([sentence + (i < arr.length - 1 ? '.' : '')]);
+              }
+              return acc;
+            }, []).map((para, i) => (
+              <p key={i} className="mb-3 last:mb-0 leading-relaxed">{para.join(' ')}</p>
+            ))}
+          </div>
+          {(project.impact.beneficiaries || project.impact.roadsBuilt || project.impact.hospitalsBuilt || project.impact.schoolsBuilt) && (
+            <div className="mt-5 pt-5 border-t">
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">Key Impact Metrics</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {project.impact.beneficiaries && (
+                  <div className="bg-green-50 rounded-lg p-3 text-center">
+                    <div className="text-sm sm:text-base font-bold text-green-800">{formatNumber(project.impact.beneficiaries)}</div>
+                    <div className="text-[10px] sm:text-xs text-green-600">Beneficiaries</div>
+                  </div>
+                )}
+                {project.impact.roadsBuilt && (
+                  <div className="bg-blue-50 rounded-lg p-3 text-center">
+                    <div className="text-sm sm:text-base font-bold text-blue-800">{formatNumber(project.impact.roadsBuilt)} km</div>
+                    <div className="text-[10px] sm:text-xs text-blue-600">Roads Built</div>
+                  </div>
+                )}
+                {project.impact.hospitalsBuilt && (
+                  <div className="bg-rose-50 rounded-lg p-3 text-center">
+                    <div className="text-sm sm:text-base font-bold text-rose-800">{formatNumber(project.impact.hospitalsBuilt)}</div>
+                    <div className="text-[10px] sm:text-xs text-rose-600">Health Facilities</div>
+                  </div>
+                )}
+                {project.impact.schoolsBuilt && (
+                  <div className="bg-indigo-50 rounded-lg p-3 text-center">
+                    <div className="text-sm sm:text-base font-bold text-indigo-800">{formatNumber(project.impact.schoolsBuilt)}</div>
+                    <div className="text-[10px] sm:text-xs text-indigo-600">Schools Built</div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router';
-import { BarChart3, FolderOpen, Menu, X, LayoutDashboard } from 'lucide-react';
+import { BarChart3, FolderOpen, Menu, X, LayoutDashboard, Flag } from 'lucide-react';
 import { useState } from 'react';
 
 export function Layout() {
@@ -14,6 +14,7 @@ export function Layout() {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/initiatives', label: 'Initiatives', icon: Flag },
     { path: '/projects', label: 'Projects', icon: FolderOpen },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
   ];

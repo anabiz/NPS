@@ -150,12 +150,22 @@ export function EvidenceGallery({ media, projectName }: EvidenceGalleryProps) {
 
           <div className="max-w-4xl max-h-[85vh] w-full mx-2 sm:mx-4" onClick={e => e.stopPropagation()}>
             {lightboxItem.type === 'video' ? (
-              <video
-                src={lightboxItem.url}
-                controls
-                autoPlay
-                className="w-full max-h-[70vh] rounded-lg bg-black"
-              />
+              lightboxItem.url.includes('youtube.com/embed') ? (
+                <iframe
+                  src={lightboxItem.url + '?autoplay=1'}
+                  title={lightboxItem.caption}
+                  className="w-full aspect-video rounded-lg"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  src={lightboxItem.url}
+                  controls
+                  autoPlay
+                  className="w-full max-h-[70vh] rounded-lg bg-black"
+                />
+              )
             ) : (
               <img
                 src={lightboxItem.url}
