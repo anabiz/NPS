@@ -849,10 +849,9 @@ const handwrittenProjects: Project[] = [
     jobsCreated: 25000,
     description: 'The Lagos-Calabar Coastal Highway is one of the most ambitious infrastructure projects in Nigeria\'s history — a 700-750km, 10-lane rigid pavement expressway that will connect nine coastal states from Lagos through Ogun, Ondo, Edo, Delta, Bayelsa, Rivers, Akwa Ibom, to Cross River. Officially commenced in March 2024 under President Bola Tinubu\'s administration, the first 47.47km phase in Lagos is being constructed by Hitech Construction Company Limited. This transformative corridor is projected to unlock massive economic potential along Nigeria\'s coastline, reduce travel time between the South-West and South-South by over 60%, create tens of thousands of direct and indirect jobs, and catalyze industrial development in previously underserved coastal communities. With an eight-year completion timeline, the highway represents a generational investment in Nigeria\'s connectivity and economic integration.',
     media: [
-      { id: 'init-m1', type: 'image', url: '/images/road-construction-progress.jpeg', caption: 'Lagos-Calabar Highway construction in progress', date: '2025-06-15', tag: 'progress' },
+      { id: 'init-m1', type: 'image', url: '/images/market-construction.jpeg', caption: 'Lagos-Calabar Highway construction in progress', date: '2025-06-15', tag: 'progress' },
       { id: 'init-m2', type: 'image', url: '/images/bridge-construction.jpeg', caption: 'Bridge section under construction', date: '2025-08-20', tag: 'progress' },
       { id: 'init-m3', type: 'image', url: '/images/bridge-construction-aerial.jpeg', caption: 'Aerial view of highway construction', date: '2025-10-10', tag: 'progress' },
-      { id: 'init-m1v1', type: 'video', url: 'https://www.youtube.com/embed/EkaI9aWIKUE', thumbnail: '/images/road-construction-progress.jpeg', caption: 'Lagos-Calabar Highway progress update', date: '2025-09-01', tag: 'progress' },
       { id: 'init-m1v2', type: 'video', url: 'https://www.youtube.com/embed/1LjFITkQpQI', thumbnail: '/images/bridge-construction-aerial.jpeg', caption: 'Aerial flyover of Lagos-Calabar Highway', date: '2025-11-15', tag: 'progress' },
     ],
     impact: { beneficiaries: 50000000, roadsBuilt: 47 },
