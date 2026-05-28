@@ -841,7 +841,7 @@ const handwrittenProjects: Project[] = [
     location: 'Lagos to Calabar Corridor',
     state: 'Lagos',
     status: 'in-progress',
-    progress: 35,
+    progress: 65,
     startDate: '2024-03-01',
     endDate: '2032-03-01',
     budget: 1500000000000,
@@ -871,8 +871,9 @@ const handwrittenProjects: Project[] = [
     jobsCreated: 18000,
     description: 'The Sokoto–Badagry Superhighway is a transformative 1,068-kilometre legacy project that has been on Nigeria\'s drawing board for over 47 years. Recently reactivated under the Renewed Hope Agenda of President Bola Ahmed Tinubu, this mega-highway will serve as a critical economic artery connecting the North-West to the South-West — linking Sokoto, Kebbi, Niger, Kwara, Oyo, Ogun, and Lagos states. The project is designed to dramatically reduce the cost of transporting goods between northern agricultural zones and southern ports, foster inter-regional trade, open up vast tracts of arable land for commercial farming, and create hundreds of thousands of construction and logistics jobs across multiple states. Its completion will fundamentally reshape Nigeria\'s internal trade dynamics and reduce the economic isolation of northern communities.',
     media: [
-      { id: 'init-m4', type: 'image', url: '/images/road-rehabilitation-before.jpeg', caption: 'Route survey before construction', date: '2024-05-10', tag: 'before' },
-      { id: 'init-m5', type: 'image', url: '/images/road-construction-progress.jpeg', caption: 'Initial construction phase', date: '2025-03-20', tag: 'progress' },
+      { id: 'init-m5', type: 'image', url: '/images/school-construction.jpeg', caption: 'Initial construction phase', date: '2025-03-20', tag: 'progress' },
+      { id: 'init-m4', type: 'image', url: '/images/sokoto-badagry-before.jpeg', caption: 'Route survey before construction', date: '2024-05-10', tag: 'before' },
+      { id: 'init-m4', type: 'image', url: '/images/healthcare-facility.jpeg', caption: 'Route survey before construction', date: '2024-05-10', tag: 'before' }
     ],
     impact: { beneficiaries: 80000000 },
   },
