@@ -1,9 +1,47 @@
 import { useParams, useNavigate } from 'react-router';
 import { projects } from '../data/mockData';
 import { EvidenceGallery } from '../components/EvidenceGallery';
-import { formatCurrency, formatNumber, getStatusLabel, getStatusBgColor, getStatusTextColor } from '../utils/helpers';
-import { ArrowLeft, MapPin, Calendar, Users, TrendingUp, Banknote } from 'lucide-react';
+import { formatCurrency, formatNumber, getStatusLabel, getStatusTextColor } from '../utils/helpers';
+import { ArrowLeft, MapPin, CalendarDays, Banknote, Users, TrendingUp, Layers } from 'lucide-react';
 import { ShareButton } from '../components/ShareButton';
+import type { Status, Project } from '../data/mockData';
+
+const sectorFallback: Record<string, string> = {
+  Infrastructure: '/images/transport-infrastructure.jpeg',
+  Agriculture: '/images/agricultural-project.jpeg',
+  Health: '/images/healthcare-facility.jpeg',
+  Education: '/images/school-construction.jpeg',
+  Power: '/images/power-infrastructure.jpeg',
+  Water: '/images/water-treatment-plant.jpeg',
+  Employment: '/images/skills-acquisition-center.jpeg',
+  Transportation: '/images/transport-infrastructure.jpeg',
+};
+
+function heroImage(project: Project): string {
+  const first = project.media.find(m => m.type === 'image');
+  return first?.url ?? sectorFallback[project.sector] ?? '/images/transport-infrastructure.jpeg';
+}
+
+function progressColor(status: Status) {
+  if (status === 'completed') return 'bg-emerald-600';
+  if (status === 'delayed') return 'bg-red-600';
+  return 'bg-amber-500';
+}
+
+function statusDot(status: Status) {
+  if (status === 'completed') return 'bg-emerald-500';
+  if (status === 'delayed') return 'bg-red-500';
+  if (status === 'in-progress') return 'bg-amber-400';
+  return 'bg-stone-400';
+}
+
+function nd(val: number) {
+  return val === 0 ? 'N/D' : formatCurrency(val);
+}
+
+function ndNum(val: number) {
+  return val === 0 ? 'N/D' : formatNumber(val);
+}
 
 export function ProjectDetail() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -12,11 +50,10 @@ export function ProjectDetail() {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center px-4">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Project Not Found</h2>
-          <p className="text-gray-600 mb-4">The project you're looking for doesn't exist.</p>
-          <button onClick={() => navigate('/projects')} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+          <p className="text-stone-500 mb-4">Project not found.</p>
+          <button onClick={() => navigate('/projects')} className="px-4 py-2 bg-stone-900 text-white text-sm">
             Back to Projects
           </button>
         </div>
@@ -24,135 +61,241 @@ export function ProjectDetail() {
     );
   }
 
+  const utilisation = project.budget > 0 ? Math.round((project.spent / project.budget) * 100) : null;
+
+  const paragraphs = project.description
+    .split(/(?<=[.!?])\s+/)
+    .reduce<string[][]>((acc, s) => {
+      const last = acc[acc.length - 1];
+      if (last && last.length < 3) { last.push(s); } else { acc.push([s]); }
+      return acc;
+    }, []);
+
+  const kpis = [
+    { icon: <Banknote className="w-3.5 h-3.5" />, label: 'Budget', value: nd(project.budget) },
+    { icon: <Banknote className="w-3.5 h-3.5" />, label: 'Disbursed', value: nd(project.spent) },
+    { icon: <Users className="w-3.5 h-3.5" />, label: 'Jobs Created', value: ndNum(project.jobsCreated) },
+    { icon: <TrendingUp className="w-3.5 h-3.5" />, label: 'Progress', value: `${project.progress}%` },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-br from-green-700 via-green-600 to-emerald-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-white/80 hover:text-white mb-6 text-sm">
-            <ArrowLeft className="w-4 h-4" /> Back
-          </button>
-          <div className="flex flex-col gap-3">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{project.name}</h1>
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-green-100 text-xs sm:text-sm">
-                  <span className="flex items-center gap-1"><MapPin className="w-4 h-4" />{project.location}</span>
-                  <span className="flex items-center gap-1"><TrendingUp className="w-4 h-4" />{project.sector}</span>
-                </div>
-              </div>
-              <div className="shrink-0">
-                <ShareButton
-                  title={project.name}
-                  text={`${project.name} — ${project.progress}% complete. ${formatNumber(project.jobsCreated)} jobs created. Track Nigeria's development progress.`}
-                  url={typeof window !== 'undefined' ? window.location.href : ''}
-                  variant="button"
-                />
-              </div>
+    <div className="min-h-screen bg-stone-100">
+
+      {/* ── Masthead ── */}
+      <header
+        className="relative border-b-4 border-emerald-500"
+        style={{ backgroundImage: `url('${heroImage(project)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      >
+        <div className="absolute inset-0 bg-stone-950/75" />
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Top bar */}
+          <div className="flex items-center justify-between py-3 border-b border-white/10">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1.5 text-white/60 hover:text-white text-xs tracking-wide uppercase transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">All Projects</span>
+            </button>
+            {/* icon-only on mobile, full button on sm+ */}
+            <div className="sm:hidden">
+              <ShareButton
+                title={project.name}
+                text={`${project.name} — ${project.progress}% complete.`}
+                url={typeof window !== 'undefined' ? window.location.href : ''}
+                variant="icon"
+              />
             </div>
-            <span className={`self-start px-4 py-1.5 rounded-full text-sm font-medium border ${getStatusBgColor(project.status)} ${getStatusTextColor(project.status)}`}>
-              {getStatusLabel(project.status)}
-            </span>
+            <div className="hidden sm:block">
+              <ShareButton
+                title={project.name}
+                text={`${project.name} — ${project.progress}% complete. Track Nigeria's development progress.`}
+                url={typeof window !== 'undefined' ? window.location.href : ''}
+                variant="button"
+              />
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {/* Key metrics */}
-        <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6">
-          <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
-            <Banknote className="w-4 h-4 text-blue-600 mx-auto mb-0.5" />
-            <div className="text-xs sm:text-sm font-bold">{formatCurrency(project.budget)}</div>
-            <div className="text-[10px] sm:text-xs text-gray-500">Budget</div>
-          </div>
-          <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
-            <Banknote className="w-4 h-4 text-green-600 mx-auto mb-0.5" />
-            <div className="text-xs sm:text-sm font-bold">{formatCurrency(project.spent)}</div>
-            <div className="text-[10px] sm:text-xs text-gray-500">Spent</div>
-          </div>
-          <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
-            <Users className="w-4 h-4 text-purple-600 mx-auto mb-0.5" />
-            <div className="text-xs sm:text-sm font-bold">{formatNumber(project.jobsCreated)}</div>
-            <div className="text-[10px] sm:text-xs text-gray-500">Jobs</div>
-          </div>
-          <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
-            <Calendar className="w-4 h-4 text-amber-600 mx-auto mb-0.5" />
-            <div className={`text-xs sm:text-sm font-bold ${getStatusTextColor(project.status)}`}>{getStatusLabel(project.status)}</div>
-            <div className="text-[10px] sm:text-xs text-gray-500">Status</div>
-          </div>
-        </div>
+          {/* Title block */}
+          <div className="py-5 sm:py-8">
+            <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
+              <span className="text-emerald-400 text-xs font-semibold tracking-widest uppercase">{project.sector}</span>
+              <span className="text-white/30 text-xs">·</span>
+              <span className={`flex items-center gap-1.5 text-xs font-medium ${getStatusTextColor(project.status)}`}>
+                <span className={`inline-block w-1.5 h-1.5 rounded-full ${statusDot(project.status)}`} />
+                {getStatusLabel(project.status)}
+              </span>
+            </div>
 
-        {/* Progress bar */}
-        <div className="bg-white rounded-lg border p-6 mb-8">
-          <div className="flex justify-between mb-2">
-            <span className="text-sm text-gray-600">Project Progress</span>
-            <span className="font-semibold">{project.progress}%</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-4">
-            <div className="bg-green-600 h-4 rounded-full transition-all" style={{ width: `${project.progress}%` }} />
-          </div>
-          <div className="flex justify-between mt-3 text-xs text-gray-500">
-            <span>Start: {new Date(project.startDate).toLocaleDateString()}</span>
-            <span>End: {new Date(project.endDate).toLocaleDateString()}</span>
-          </div>
-        </div>
+            <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight tracking-tight mb-3 sm:mb-4">
+              {project.name}
+            </h1>
 
-        {/* Description */}
-        <div className="bg-white rounded-lg border p-6 mb-8">
-          <h2 className="text-lg font-bold mb-4">About This Project</h2>
-          <div className="prose prose-sm sm:prose-base max-w-none text-gray-600">
-            {project.description.split('. ').reduce((acc: string[][], sentence, i, arr) => {
-              // Group sentences into paragraphs of 2-3 sentences
-              const lastGroup = acc[acc.length - 1];
-              if (lastGroup && lastGroup.length < 3) {
-                lastGroup.push(sentence + (i < arr.length - 1 ? '.' : ''));
-              } else {
-                acc.push([sentence + (i < arr.length - 1 ? '.' : '')]);
-              }
-              return acc;
-            }, []).map((para, i) => (
-              <p key={i} className="mb-3 last:mb-0 leading-relaxed">{para.join(' ')}</p>
+            <div className="flex flex-wrap gap-3 sm:gap-4 text-white/60 text-xs">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                {project.location}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CalendarDays className="w-3.5 h-3.5 shrink-0" />
+                {new Date(project.startDate).getFullYear()} – {new Date(project.endDate).getFullYear()}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 shrink-0" />
+                {project.sector}
+              </span>
+            </div>
+          </div>
+
+          {/* KPI strip — 2×2 on mobile, 4 cols on sm+ */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 border-t border-white/10 divide-y sm:divide-y-0 divide-x divide-white/10">
+            {kpis.map(({ icon, label, value }, i) => (
+              <div
+                key={label}
+                className={`py-3 sm:py-4 px-3 sm:px-5 text-center ${i % 2 === 0 ? '' : ''}`}
+              >
+                <div className="flex items-center justify-center gap-1 text-white/40 mb-1">{icon}</div>
+                <div className="text-white font-bold text-sm sm:text-base leading-none">{value}</div>
+                <div className="text-white/40 text-[10px] mt-1 uppercase tracking-wide">{label}</div>
+              </div>
             ))}
           </div>
-          {(project.impact.beneficiaries || project.impact.roadsBuilt || project.impact.hospitalsBuilt || project.impact.schoolsBuilt) && (
-            <div className="mt-5 pt-5 border-t">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Key Impact Metrics</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {project.impact.beneficiaries && (
-                  <div className="bg-green-50 rounded-lg p-3 text-center">
-                    <div className="text-sm sm:text-base font-bold text-green-800">{formatNumber(project.impact.beneficiaries)}</div>
-                    <div className="text-[10px] sm:text-xs text-green-600">Beneficiaries</div>
+        </div>
+      </header>
+
+      {/* ── Body ── */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
+
+          {/* ── Sidebar — shown FIRST on mobile, right on desktop ── */}
+          <aside className="order-first lg:order-last space-y-4 sm:space-y-6">
+
+            {/* Project Details */}
+            <div className="bg-white border border-stone-200">
+              <div className="px-4 sm:px-5 py-3 border-b border-stone-200 bg-stone-50">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-stone-500">Project Details</h3>
+              </div>
+              {/* 2-col grid on mobile for compact display */}
+              <dl className="grid grid-cols-2 sm:grid-cols-1 divide-y-0 sm:divide-y divide-stone-100">
+                {[
+                  { label: 'Sector', value: project.sector },
+                  { label: 'Location', value: project.location },
+                  { label: 'State', value: project.state },
+                  { label: 'Start', value: new Date(project.startDate).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) },
+                  { label: 'Target End', value: new Date(project.endDate).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) },
+                  { label: 'Status', value: getStatusLabel(project.status), colored: true },
+                ].map(({ label, value, colored }) => (
+                  <div key={label} className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-0.5 sm:gap-3 px-4 sm:px-5 py-2.5 sm:py-3 border-b border-stone-100">
+                    <dt className="text-[10px] sm:text-xs text-stone-400 shrink-0 uppercase tracking-wide sm:normal-case sm:tracking-normal">{label}</dt>
+                    <dd className={`text-xs font-semibold sm:text-right ${colored ? getStatusTextColor(project.status) : 'text-stone-800'}`}>{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            {/* Key Impact */}
+            {(project.impact.beneficiaries || project.impact.roadsBuilt || project.impact.hospitalsBuilt || project.impact.schoolsBuilt || project.jobsCreated > 0) && (
+              <div className="bg-white border border-stone-200">
+                <div className="px-4 sm:px-5 py-3 border-b border-stone-200 bg-stone-50">
+                  <h3 className="text-[11px] font-bold uppercase tracking-widest text-stone-500">Key Impact</h3>
+                </div>
+                <dl className="grid grid-cols-2 sm:grid-cols-1 divide-stone-100">
+                  {[
+                    project.impact.beneficiaries ? { label: 'Beneficiaries', value: formatNumber(project.impact.beneficiaries) } : null,
+                    project.impact.roadsBuilt ? { label: 'Road Length', value: `${project.impact.roadsBuilt} km` } : null,
+                    project.impact.hospitalsBuilt ? { label: 'Health Facilities', value: String(project.impact.hospitalsBuilt) } : null,
+                    project.impact.schoolsBuilt ? { label: 'Schools Built', value: String(project.impact.schoolsBuilt) } : null,
+                    project.jobsCreated > 0 ? { label: 'Jobs Created', value: formatNumber(project.jobsCreated) } : null,
+                  ].filter(Boolean).map(row => (
+                    <div key={row!.label} className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-0.5 sm:gap-3 px-4 sm:px-5 py-2.5 sm:py-3 border-b border-stone-100">
+                      <dt className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wide sm:normal-case sm:tracking-normal">{row!.label}</dt>
+                      <dd className="text-xs font-bold text-stone-800 sm:text-right">{row!.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            )}
+
+            {/* Financials */}
+            <div className="bg-white border border-stone-200">
+              <div className="px-4 sm:px-5 py-3 border-b border-stone-200 bg-stone-50">
+                <h3 className="text-[11px] font-bold uppercase tracking-widest text-stone-500">Financials</h3>
+              </div>
+              <dl>
+                <div className="flex justify-between items-baseline gap-3 px-4 sm:px-5 py-2.5 sm:py-3 border-b border-stone-100">
+                  <dt className="text-xs text-stone-400">Total Budget</dt>
+                  <dd className="text-xs font-bold text-stone-800">{nd(project.budget)}</dd>
+                </div>
+                <div className="flex justify-between items-baseline gap-3 px-4 sm:px-5 py-2.5 sm:py-3 border-b border-stone-100">
+                  <dt className="text-xs text-stone-400">Disbursed</dt>
+                  <dd className="text-xs font-bold text-stone-800">{nd(project.spent)}</dd>
+                </div>
+                {utilisation !== null && (
+                  <div className="px-4 sm:px-5 py-3">
+                    <div className="flex justify-between mb-1.5">
+                      <dt className="text-xs text-stone-400">Utilisation</dt>
+                      <dd className="text-xs font-bold text-stone-800">{utilisation}%</dd>
+                    </div>
+                    <div className="h-1.5 bg-stone-200 overflow-hidden">
+                      <div className="h-full bg-emerald-600" style={{ width: `${Math.min(utilisation, 100)}%` }} />
+                    </div>
                   </div>
                 )}
-                {project.impact.roadsBuilt && (
-                  <div className="bg-blue-50 rounded-lg p-3 text-center">
-                    <div className="text-sm sm:text-base font-bold text-blue-800">{formatNumber(project.impact.roadsBuilt)} km</div>
-                    <div className="text-[10px] sm:text-xs text-blue-600">Roads Built</div>
-                  </div>
-                )}
-                {project.impact.hospitalsBuilt && (
-                  <div className="bg-rose-50 rounded-lg p-3 text-center">
-                    <div className="text-sm sm:text-base font-bold text-rose-800">{formatNumber(project.impact.hospitalsBuilt)}</div>
-                    <div className="text-[10px] sm:text-xs text-rose-600">Health Facilities</div>
-                  </div>
-                )}
-                {project.impact.schoolsBuilt && (
-                  <div className="bg-indigo-50 rounded-lg p-3 text-center">
-                    <div className="text-sm sm:text-base font-bold text-indigo-800">{formatNumber(project.impact.schoolsBuilt)}</div>
-                    <div className="text-[10px] sm:text-xs text-indigo-600">Schools Built</div>
-                  </div>
-                )}
+              </dl>
+            </div>
+
+            <p className="text-[10px] text-stone-400 leading-relaxed px-1">
+              N/D — Not disclosed in available public sources. Figures drawn from FEC briefings, ministry statements and news reporting. Not independently audited.
+            </p>
+          </aside>
+
+          {/* ── Main content ── */}
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+
+            {/* Progress bar */}
+            <div>
+              <div className="flex justify-between items-baseline mb-2">
+                <span className="text-xs font-semibold uppercase tracking-widest text-stone-500">Implementation Progress</span>
+                <span className="text-sm font-bold text-stone-800">{project.progress}%</span>
+              </div>
+              <div className="h-2 bg-stone-300 overflow-hidden">
+                <div
+                  className={`h-full transition-all ${progressColor(project.status)}`}
+                  style={{ width: `${project.progress}%` }}
+                />
+              </div>
+              <div className="flex justify-between mt-1.5 text-[10px] text-stone-400">
+                <span>{new Date(project.startDate).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}</span>
+                <span>{new Date(project.endDate).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}</span>
               </div>
             </div>
-          )}
-        </div>
 
-        {/* Evidence Gallery */}
-        {project.media.length > 0 && (
-          <div className="mb-8">
-            <EvidenceGallery media={project.media} projectName={project.name} />
+            <hr className="border-stone-300" />
+
+            {/* Description */}
+            <div>
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-stone-500 mb-4">Project Overview</h2>
+              <div className="space-y-4">
+                {paragraphs.map((para, i) => (
+                  <p key={i} className="text-stone-700 leading-relaxed text-sm sm:text-base">
+                    {para.join(' ')}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            {/* Evidence Gallery */}
+            {project.media.length > 0 && (
+              <>
+                <hr className="border-stone-300" />
+                <EvidenceGallery media={project.media} projectName={project.name} />
+              </>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
