@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
+import { useEffect } from 'react';
 import { projects } from '../data/mockData';
 import { EvidenceGallery } from '../components/EvidenceGallery';
 import { formatCurrency, formatNumber, getStatusLabel, getStatusTextColor } from '../utils/helpers';
@@ -61,6 +62,25 @@ export function ProjectDetail() {
     );
   }
 
+  const image = heroImage(project);
+  const shareText = `${project.name} — ${project.progress}% complete. Track Nigeria's development progress.`;
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+
+  // Inject OG meta tags so social platforms scrape the correct image when the link is shared
+  useEffect(() => {
+    const setMeta = (property: string, content: string) => {
+      let el = document.querySelector<HTMLMetaElement>(`meta[property='${property}']`);
+      if (!el) { el = document.createElement('meta'); el.setAttribute('property', property); document.head.appendChild(el); }
+      el.setAttribute('content', content);
+    };
+    const absImage = image.startsWith('http') ? image : `${window.location.origin}${image}`;
+    setMeta('og:title', project.name);
+    setMeta('og:description', shareText);
+    setMeta('og:image', absImage);
+    setMeta('og:url', shareUrl);
+    setMeta('og:type', 'article');
+  }, [project.id]);
+
   const utilisation = project.budget > 0 ? Math.round((project.spent / project.budget) * 100) : null;
 
   const paragraphs = project.description
@@ -81,6 +101,26 @@ export function ProjectDetail() {
   return (
     <div className="min-h-screen bg-stone-100">
 
+      {/* ── Sticky bar ── */}
+      <div className="sticky top-16 z-40 bg-stone-900/95 backdrop-blur border-b border-white/10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-2.5">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-1.5 text-white/60 hover:text-white text-xs tracking-wide uppercase transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">All Projects</span>
+          </button>
+          <span className="text-white/50 text-xs font-medium truncate max-w-[50%] sm:max-w-xs text-center">{project.name}</span>
+          <div className="sm:hidden">
+            <ShareButton title={project.name} text={shareText} url={shareUrl} image={image} variant="icon" />
+          </div>
+          <div className="hidden sm:block">
+            <ShareButton title={project.name} text={shareText} url={shareUrl} image={image} variant="button" />
+          </div>
+        </div>
+      </div>
+
       {/* ── Masthead ── */}
       <header
         className="relative border-b-4 border-emerald-500"
@@ -89,34 +129,6 @@ export function ProjectDetail() {
         <div className="absolute inset-0 bg-stone-950/75" />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          {/* Top bar */}
-          <div className="flex items-center justify-between py-3 border-b border-white/10">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-1.5 text-white/60 hover:text-white text-xs tracking-wide uppercase transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">All Projects</span>
-            </button>
-            {/* icon-only on mobile, full button on sm+ */}
-            <div className="sm:hidden">
-              <ShareButton
-                title={project.name}
-                text={`${project.name} — ${project.progress}% complete.`}
-                url={typeof window !== 'undefined' ? window.location.href : ''}
-                variant="icon"
-              />
-            </div>
-            <div className="hidden sm:block">
-              <ShareButton
-                title={project.name}
-                text={`${project.name} — ${project.progress}% complete. Track Nigeria's development progress.`}
-                url={typeof window !== 'undefined' ? window.location.href : ''}
-                variant="button"
-              />
-            </div>
-          </div>
 
           {/* Title block */}
           <div className="py-5 sm:py-8">

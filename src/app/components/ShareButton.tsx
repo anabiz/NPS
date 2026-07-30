@@ -5,6 +5,7 @@ interface ShareButtonProps {
   title: string;
   text: string;
   url: string;
+  image?: string;
   variant?: 'icon' | 'button';
 }
 
@@ -15,7 +16,7 @@ const platforms = [
       <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
     ),
     getUrl: (url: string, text: string) => `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-    color: 'hover:bg-gray-900 hover:text-white',
+    color: 'hover:bg-stone-900 hover:text-white',
   },
   {
     name: 'Facebook',
@@ -38,7 +39,7 @@ const platforms = [
     icon: () => (
       <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
     ),
-    getUrl: (url: string, title: string) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    getUrl: (url: string) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
     color: 'hover:bg-blue-700 hover:text-white',
   },
   {
@@ -51,7 +52,7 @@ const platforms = [
   },
 ];
 
-export function ShareButton({ title, text, url, variant = 'button' }: ShareButtonProps) {
+export function ShareButton({ title, text, url, image, variant = 'button' }: ShareButtonProps) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -65,12 +66,28 @@ export function ShareButton({ title, text, url, variant = 'button' }: ShareButto
   }, []);
 
   const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text, url });
-        setOpen(false);
-      } catch {}
-    }
+    if (!navigator.share) return;
+    try {
+      // Try to attach the image as a File for platforms that support it (mobile)
+      if (image && navigator.canShare) {
+        try {
+          const absUrl = image.startsWith('http') ? image : `${window.location.origin}${image}`;
+          const res = await fetch(absUrl);
+          const blob = await res.blob();
+          const ext = blob.type.split('/')[1] || 'jpg';
+          const file = new File([blob], `project.${ext}`, { type: blob.type });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ title, text, url, files: [file] });
+            setOpen(false);
+            return;
+          }
+        } catch {
+          // fall through to share without image
+        }
+      }
+      await navigator.share({ title, text, url });
+      setOpen(false);
+    } catch {}
   };
 
   const copyLink = async () => {
@@ -79,8 +96,8 @@ export function ShareButton({ title, text, url, variant = 'button' }: ShareButto
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const shareClick = (getUrl: (url: string, text: string, title: string) => string) => {
-    window.open(getUrl(url, text, title), '_blank', 'width=600,height=400,noopener,noreferrer');
+  const shareClick = (getUrl: (url: string, text: string) => string) => {
+    window.open(getUrl(url, text), '_blank', 'width=600,height=400,noopener,noreferrer');
     setOpen(false);
   };
 
@@ -89,7 +106,7 @@ export function ShareButton({ title, text, url, variant = 'button' }: ShareButto
       {variant === 'icon' ? (
         <button
           onClick={e => { e.stopPropagation(); setOpen(!open); }}
-          className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+          className="p-1.5 text-white/60 hover:text-white transition-colors"
           title="Share"
         >
           <Share2 className="w-4 h-4" />
@@ -97,21 +114,39 @@ export function ShareButton({ title, text, url, variant = 'button' }: ShareButto
       ) : (
         <button
           onClick={e => { e.stopPropagation(); setOpen(!open); }}
-          className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 text-white/80 hover:bg-white/20 hover:text-white text-xs uppercase tracking-wide transition-colors"
         >
-          <Share2 className="w-4 h-4" />
-          Share Project
+          <Share2 className="w-3.5 h-3.5" />
+          Share
         </button>
       )}
 
       {open && (
         <div
-          className="absolute right-0 top-full mt-2 w-56 bg-white border rounded-xl shadow-xl z-50 overflow-hidden"
+          className="absolute right-0 top-full mt-2 w-64 bg-white border border-stone-200 shadow-xl z-50 overflow-hidden"
           onClick={e => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between px-4 py-2.5 border-b bg-gray-50">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Share via</span>
-            <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600">
+          {/* Preview card */}
+          {image && (
+            <div className="relative">
+              <img
+                src={image}
+                alt={title}
+                className="w-full h-32 object-cover"
+                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              <div className="absolute bottom-0 inset-x-0 px-3 py-2">
+                <p className="text-white text-xs font-semibold leading-snug line-clamp-2">{title}</p>
+                <p className="text-white/50 text-[10px] mt-0.5 truncate">{url}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-2 border-b border-stone-100 bg-stone-50">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Share via</span>
+            <button onClick={() => setOpen(false)} className="text-stone-400 hover:text-stone-600">
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -121,10 +156,10 @@ export function ShareButton({ title, text, url, variant = 'button' }: ShareButto
             {typeof navigator !== 'undefined' && navigator.share && (
               <button
                 onClick={handleNativeShare}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-stone-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
               >
                 <Share2 className="w-4 h-4" />
-                Share...
+                Share with image…
               </button>
             )}
 
@@ -132,19 +167,19 @@ export function ShareButton({ title, text, url, variant = 'button' }: ShareButto
               <button
                 key={p.name}
                 onClick={() => shareClick(p.getUrl)}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 transition-colors ${p.color}`}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-stone-700 transition-colors ${p.color}`}
               >
                 <p.icon />
                 {p.name}
               </button>
             ))}
 
-            <div className="border-t" />
+            <div className="border-t border-stone-100" />
             <button
               onClick={copyLink}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-100 transition-colors"
             >
-              {copied ? <Check className="w-4 h-4 text-green-600" /> : <Link className="w-4 h-4" />}
+              {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Link className="w-4 h-4" />}
               {copied ? 'Link Copied!' : 'Copy Link'}
             </button>
           </div>
