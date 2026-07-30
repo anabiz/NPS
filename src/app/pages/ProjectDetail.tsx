@@ -102,7 +102,7 @@ export function ProjectDetail() {
     <div className="min-h-screen bg-stone-100">
 
       {/* ── Sticky bar ── */}
-      <div className="sticky top-16 z-40 bg-stone-900/95 backdrop-blur border-b border-white/10">
+      <div className="sticky top-16 z-40 bg-stone-900/95 backdrop-blur border-b border-white/10 overflow-visible">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between py-2.5">
           <button
             onClick={() => navigate(-1)}

@@ -123,7 +123,7 @@ export function ShareButton({ title, text, url, image, variant = 'button' }: Sha
 
       {open && (
         <div
-          className="absolute right-0 top-full mt-2 w-64 bg-white border border-stone-200 shadow-xl z-50 overflow-hidden"
+          className="absolute right-0 top-full mt-2 w-64 bg-white border border-stone-200 shadow-xl z-[60] overflow-hidden"
           onClick={e => e.stopPropagation()}
         >
           {/* Preview card */}
