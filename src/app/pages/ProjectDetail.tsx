@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router';
 import { projects } from '../data/mockData';
 import { EvidenceGallery } from '../components/EvidenceGallery';
 import { formatCurrency, formatNumber, getStatusLabel, getStatusBgColor, getStatusTextColor } from '../utils/helpers';
-import { ArrowLeft, MapPin, Calendar, Users, DollarSign, TrendingUp } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Users, TrendingUp, Banknote } from 'lucide-react';
 import { ShareButton } from '../components/ShareButton';
 
 export function ProjectDetail() {
@@ -60,12 +60,12 @@ export function ProjectDetail() {
         {/* Key metrics */}
         <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6">
           <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
-            <DollarSign className="w-4 h-4 text-blue-600 mx-auto mb-0.5" />
+            <Banknote className="w-4 h-4 text-blue-600 mx-auto mb-0.5" />
             <div className="text-xs sm:text-sm font-bold">{formatCurrency(project.budget)}</div>
             <div className="text-[10px] sm:text-xs text-gray-500">Budget</div>
           </div>
           <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
-            <DollarSign className="w-4 h-4 text-green-600 mx-auto mb-0.5" />
+            <Banknote className="w-4 h-4 text-green-600 mx-auto mb-0.5" />
             <div className="text-xs sm:text-sm font-bold">{formatCurrency(project.spent)}</div>
             <div className="text-[10px] sm:text-xs text-gray-500">Spent</div>
           </div>
@@ -76,8 +76,8 @@ export function ProjectDetail() {
           </div>
           <div className="bg-white rounded-lg border p-2.5 sm:p-4 text-center">
             <Calendar className="w-4 h-4 text-amber-600 mx-auto mb-0.5" />
-            <div className="text-xs sm:text-sm font-bold">{project.progress}%</div>
-            <div className="text-[10px] sm:text-xs text-gray-500">Progress</div>
+            <div className={`text-xs sm:text-sm font-bold ${getStatusTextColor(project.status)}`}>{getStatusLabel(project.status)}</div>
+            <div className="text-[10px] sm:text-xs text-gray-500">Status</div>
           </div>
         </div>
 

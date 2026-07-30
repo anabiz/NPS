@@ -44,6 +44,9 @@ pnpm-debug.log*
 # Testing
 coverage/
 
+# Docs
+doc/
+
 # Misc tooling
 .opencode/
 .eslintcache
