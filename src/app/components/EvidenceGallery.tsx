@@ -175,9 +175,9 @@ export function EvidenceGallery({ media, projectName }: EvidenceGalleryProps) {
 
             <div className="w-full max-w-4xl">
               {lbItem.type === 'video' ? (
-                lbItem.url.includes('youtube.com/embed') ? (
+                lbItem.url.includes('youtube.com/embed') || lbItem.url.includes('facebook.com/plugins/video') ? (
                   <iframe
-                    src={`${lbItem.url}?autoplay=1`}
+                    src={lbItem.url.includes('youtube.com/embed') ? `${lbItem.url}?autoplay=1` : lbItem.url}
                     title={lbItem.caption}
                     className="w-full aspect-video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
